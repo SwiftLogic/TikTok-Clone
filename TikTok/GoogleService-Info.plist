@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>675727701318-mfm74rem7rg4ub99ktc2nh04inu4hi83.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.675727701318-mfm74rem7rg4ub99ktc2nh04inu4hi83</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB-NqJpjkXajhcaM11s-6cHu6AOabXFLfA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>675727701318</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>SamiSays11.comG.TikTok</string>
+	<key>PROJECT_ID</key>
+	<string>tiktok-85acc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tiktok-85acc.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:675727701318:ios:587158966ceee9228e6147</string>
+	<key>DATABASE_URL</key>
+	<string>https://tiktok-85acc.firebaseio.com</string>
+</dict>
+</plist>
