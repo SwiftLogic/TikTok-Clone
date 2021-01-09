@@ -16,7 +16,7 @@ fileprivate let headerReuseIdentifier = "headerReuseIdentifier"
 fileprivate let footerReuseIdentifier = "footerReuseIdentifier"
 class CreatePostVC: UIViewController {
     
-    
+    //
     //MARK: - Init
     override func viewDidLoad() {
         super.viewDidLoad()
