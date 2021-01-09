@@ -27,8 +27,8 @@ class CreatePostVC: UIViewController {
         segPro.anchor(top: progressView.topAnchor, leading: progressView.leadingAnchor, bottom: nil, trailing: progressView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 6)) //0.25
         progressView.alpha = 0
         
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-//        view.addGestureRecognizer(tapGesture)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        view.addGestureRecognizer(tapGesture)
 
     }
     
