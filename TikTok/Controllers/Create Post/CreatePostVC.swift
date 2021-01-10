@@ -22,28 +22,10 @@ class CreatePostVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
         setUpViews()
-        
-        view.addSubview(segPro)
-        segPro.anchor(top: progressView.topAnchor, leading: progressView.leadingAnchor, bottom: nil, trailing: progressView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 6)) //0.25
-        progressView.alpha = 0
-        //
-//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-//        view.addGestureRecognizer(tapGesture)
-
     }
     
-    let segPro = SegmentedProgressView()
 
-    
-    @objc func handleTap() {
-        let basicAnimation = CABasicAnimation(keyPath: "strokeEnd")
-        basicAnimation.toValue = 1
-        basicAnimation.duration = 2
-        basicAnimation.fillMode = .forwards
-        basicAnimation.isRemovedOnCompletion = false
-        segPro.shapeLayer.add(basicAnimation, forKey: "urSoBasic")
-    }
-    
+  
     
     override func viewDidDisappear(_ animated: Bool) {
        super.viewDidDisappear(animated)
@@ -68,7 +50,11 @@ class CreatePostVC: UIViewController {
     
     
     fileprivate var thumbnailImage: UIImage?
-    fileprivate var currentMaxRecordingDuration: CGFloat = 15
+    fileprivate var currentMaxRecordingDuration: Int = 15 {
+        didSet {
+            recordingTimeLabel.text = "\(currentMaxRecordingDuration)s"
+        }
+    }
     let photoOutput = AVCapturePhotoOutput()
     let movieOutput = AVCaptureMovieFileOutput()
     let captureSession = AVCaptureSession()
@@ -89,19 +75,17 @@ class CreatePostVC: UIViewController {
     
     fileprivate let captureButtonDimension: CGFloat = 68
 
-    
-   let progressView: UIProgressView = {
-        let progressView = UIProgressView()
-        progressView.trackTintColor = UIColor.white.withAlphaComponent(0.2) //0.5
-        progressView.progressTintColor = snapchatBlueColor
-        progressView.clipsToBounds = true
-        progressView.layer.cornerRadius = 2
-        progressView.transform = progressView.transform.scaledBy(x: 1, y: 2.8)
-        return progressView
-    }()
-    
-    
-    
+    let segmentedProgressView = SegmentedProgressView()
+
+//   let progressView: UIProgressView = {
+//        let progressView = UIProgressView()
+//        progressView.trackTintColor = UIColor.white.withAlphaComponent(0.2) //0.5
+//        progressView.progressTintColor = snapchatBlueColor
+//        progressView.clipsToBounds = true
+//        progressView.layer.cornerRadius = 2
+//        progressView.transform = progressView.transform.scaledBy(x: 1, y: 2.8)
+//        return progressView
+//    }()
     
     
      let cancelButton: UIButton = {
@@ -113,8 +97,9 @@ class CreatePostVC: UIViewController {
     }()
 
     
-    let createPostMenuBar: CreatePostMenuBar = {
+    lazy var createPostMenuBar: CreatePostMenuBar = {
         let createPostMenuBar = CreatePostMenuBar()
+        createPostMenuBar.delegate = self
         return createPostMenuBar
     }()
     
@@ -241,10 +226,17 @@ class CreatePostVC: UIViewController {
        
     
     fileprivate let recordingTimeLabel: UILabel = {
-           let label = UILabel()
-           label.textColor = .white
-           label.text = "00:00"
-           return label
+        let label = UILabel()
+        label.textColor = .white
+        label.text = "15"
+        label.font = defaultFont(size: 11.5)
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.42)
+        label.textAlignment = .center
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 30 / 2
+        label.layer.borderWidth = 1.8
+        label.layer.borderColor = UIColor.white.cgColor
+        return label
        }()
        
         
@@ -252,16 +244,21 @@ class CreatePostVC: UIViewController {
     //MARK: - Handlers
     fileprivate func setUpViews() {
         let padding: CGFloat = 17.5
-        view.addSubview(progressView)
-        progressView.constrainToTop(paddingTop: 12)
-        progressView.centerXInSuperview()
-        progressView.constrainWidth(constant: view.frame.width - padding)
+        view.addSubview(segmentedProgressView)
+        segmentedProgressView.constrainToTop(paddingTop: 12)
+        segmentedProgressView.centerXInSuperview()
+        segmentedProgressView.constrainWidth(constant: view.frame.width - padding)
+        segmentedProgressView.constrainHeight(constant: 6)
         
         
        
         
         view.addSubview(cancelButton)
         cancelButton.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 30, left: 12, bottom: 0, right: 0), size: .init(width: 30, height: 30))
+        
+        
+        view.addSubview(recordingTimeLabel)
+        recordingTimeLabel.anchor(top: cancelButton.bottomAnchor, leading: cancelButton.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 15, left: 0, bottom: 0, right: 0), size: .init(width: 30, height: 30))
         
         view.addSubview(createPostMenuBar)
         createPostMenuBar.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: nil, size: .init(width: view.frame.width, height: 50))
@@ -324,9 +321,6 @@ class CreatePostVC: UIViewController {
         save_discardButtonsStacView.centerInSuperview()
         
         
-//        view.addSubview(recordingTimeLabel)
-//        recordingTimeLabel.centerInSuperview()
-//         
         handleSetUpDevices()
         
         if setUpSession() {
@@ -371,7 +365,7 @@ class CreatePostVC: UIViewController {
         FileManager.default.clearTmpDirectory()
         outPutURL = nil
         thumbnailImage = nil
-        progressView.setProgress(0, animated: true)
+        segmentedProgressView.setProgress(0)
         handleResetAllVisibilityToIdentity()
     }
     
@@ -567,7 +561,7 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
            
            previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
            previewLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-           view.layer.insertSublayer(previewLayer, below: progressView.layer)
+           view.layer.insertSublayer(previewLayer, below: segmentedProgressView.layer)
            return true
        }
     
@@ -657,7 +651,7 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
                 
                 outPutURL = tempURL()
                 movieOutput.startRecording(to: outPutURL, recordingDelegate: self)
-                progressView.progress = 0
+                segmentedProgressView.setProgress(0)
 
 
             }
@@ -672,6 +666,7 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
             movieOutput.stopRecording()
             stopTimer()
             saveRecordingButton.alpha = 1
+            segmentedProgressView.pauseProgress()
             print("STOP THE COUNT!!!")
         }
     }
@@ -713,57 +708,43 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
         
          timeSec = 0
         // timeMin = 0
-        
-        // If you don't use the 2 lines above then the timer will continue from whatever time it was stopped at
-        let timeNow = String(format: "%02d:%02d", timeMin, timeSec)
-        
-        recordingTimeLabel.text = timeNow
-        
+  
         stopTimer() // stop it at it's current time before starting it again
-        recordingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.timerTick()
         }
     }
     
     
+    
+    
+    
     @objc fileprivate func timerTick(){
         timeSec += 1
-        if timeSec == 60 {
-            timeSec = 0
-            timeMin += 1
-            stopRecording()
-        }
-        
-        
-        if timeSec == 15 {
-            handleDidTapRecordButton()
-        }
-        
-        let timeNow = String(format: "%02d:%02d", timeMin, timeSec)
-        recordingTimeLabel.text = timeNow
-        
-        //this workks as well but the animation is slightly jumpy - S.B
-//       let startTime = 0
-//       let trimmedTime: Int = Int(currentMaxRecordingDuration)  - startTime
-//       let positiveOrZero = max(timeSec, 0) //makes sure it doesnt go below 0 i.e no negative readings
-//       progressView.setProgress(Float(positiveOrZero) / Float(trimmedTime), animated: true)
-        UIView.animate(withDuration: TimeInterval(currentMaxRecordingDuration), animations: {[weak self] () -> Void in
-            self?.progressView.setProgress(1.0, animated: true)
-        })
+       let time_limit = currentMaxRecordingDuration * 10
+       if timeSec == time_limit {
+           handleDidTapRecordButton()
+       }
+       let startTime = 0
+       let trimmedTime: Int = Int(currentMaxRecordingDuration)  - startTime
+       let positiveOrZero = max(timeSec, 0) //makes sure it doesnt go below 0 i.e no negative readings
+       let progress = Float(positiveOrZero) / Float(trimmedTime) / 10
+        segmentedProgressView.setProgress(CGFloat(progress))
+        let countDownSec: Int = Int(currentMaxRecordingDuration)  - timeSec / 10
+        recordingTimeLabel.text = "\(countDownSec)s"
     }
+    
     
     // resets both vars back to 0 and when the timer starts again it will start at 0
     @objc fileprivate func resetTimerToZero(){
         timeSec = 0
         timeMin = 0
         stopTimer()
-        recordingTimeLabel.text = String(format: "%02d:%02d", timeMin, timeSec)
     }
     
     // if you need to reset the timer to 0 and yourLabel.txt back to 00:00
     @objc  func resetTimerAndLabel(){
         resetTimerToZero()
-        recordingTimeLabel.text = String(format: "%02d:%02d", timeMin, timeSec)
     }
     
     // stops the timer at it's current time
@@ -783,4 +764,26 @@ extension CreatePostVC: MediaPickerWasClosedDelegate {
             perform(#selector(startSession), with: nil, afterDelay: 0.1)
         }
     }
+}
+
+
+//MARK: - CreatePostMenuBarDelegate
+extension CreatePostVC : CreatePostMenuBarDelegate {
+    
+    
+    func didSelectMenu(at index: Int) {
+        if index == 0 {
+            currentMaxRecordingDuration = 60
+            print("currentMaxRecordingDuration:", currentMaxRecordingDuration)
+        } else if index == 1 {
+            currentMaxRecordingDuration = 15
+            print("currentMaxRecordingDuration:", currentMaxRecordingDuration)
+
+        } else if index == 2 {
+            //open templates
+            print("currentMaxRecordingDuration:", "open temlates")
+
+        }
+    }
+    
 }

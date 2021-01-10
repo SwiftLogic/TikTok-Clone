@@ -71,3 +71,19 @@ public func getAssetThumbnail(asset: PHAsset, size: CGSize) -> UIImage? {
      let thumbnailImage = PHLibraryAPI.shared.getAssetThumbnail(asset: asset, size: size)
     return thumbnailImage
 }
+
+
+
+let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
+/// Triggered an haptic feedback
+ public func triggerHapticFeedback() {
+     selectionFeedbackGenerator.selectionChanged()
+ }
+
+
+
+let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
+
+public func triggerHapticSuccessFeedback() {
+    notificationFeedbackGenerator.notificationOccurred(.success)
+}

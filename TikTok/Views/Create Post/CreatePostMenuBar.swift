@@ -14,6 +14,9 @@
 //
 
 import UIKit
+protocol CreatePostMenuBarDelegate: AnyObject {
+    func didSelectMenu(at index: Int)
+}
 class CreatePostMenuBar: UICollectionViewCell {
     
     //MARK: - Init
@@ -27,6 +30,7 @@ class CreatePostMenuBar: UICollectionViewCell {
     
     
     //MARK: - Properties
+    weak var delegate: CreatePostMenuBarDelegate?
     lazy var menuTitles: [String] = [" 60s", "15s", "Templates"]
 
     
@@ -101,8 +105,7 @@ extension CreatePostMenuBar: UICollectionViewDelegate, UICollectionViewDataSourc
         func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CreatePostMenuCell
             cell.menuLabel.text = menuTitles[indexPath.item]
-//            let colors = [UIColor.red, .yellow, .green]
-//            cell.backgroundColor = colors[indexPath.item]
+            cell.delegate = self
             return cell
         }
         
@@ -134,6 +137,7 @@ extension CreatePostMenuBar: UICollectionViewDelegate, UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+//        delegate?.didSelectMenu(at: indexPath.item)
     }
         
     
@@ -180,7 +184,16 @@ extension CreatePostMenuBar: UICollectionViewDelegate, UICollectionViewDataSourc
 
 
 
+extension CreatePostMenuBar: CreatePostMenuCellDelegate {
+    func didSelectCell(cell: CreatePostMenuCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else {return}
+        delegate?.didSelectMenu(at: indexPath.item)
+    }
+}
 
+protocol CreatePostMenuCellDelegate: class {
+    func didSelectCell(cell: CreatePostMenuCell)
+}
 class CreatePostMenuCell: UICollectionViewCell {
     
     //MARK: - Init
@@ -194,6 +207,7 @@ class CreatePostMenuCell: UICollectionViewCell {
     
     
     //MARK: - Properties
+    weak var delegate: CreatePostMenuCellDelegate?
     let unselectedColor = UIColor.white.withAlphaComponent(0.7)
     lazy var menuLabel: UILabel = {
         let label = UILabel()
@@ -206,6 +220,9 @@ class CreatePostMenuCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             menuLabel.textColor = isSelected ? .white : unselectedColor
+            if isSelected == true {
+                delegate?.didSelectCell(cell: self)
+            }
         }
     }
     
@@ -250,10 +267,15 @@ extension UICollectionView {
             }
         }
         if closestCellIndex != -1 {
-            self.scrollToItem(at: IndexPath(row: closestCellIndex, section: 0), at: .centeredHorizontally, animated: true)
+            
+            let indexPath = IndexPath(row: closestCellIndex, section: 0)
+            
+            self.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             
             //S.B I added this last bit to achieve end result we desired
-            self.selectItem(at: IndexPath(row: closestCellIndex, section: 0), animated: true, scrollPosition: .centeredHorizontally)
+            self.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+
+
         }
     }
 }

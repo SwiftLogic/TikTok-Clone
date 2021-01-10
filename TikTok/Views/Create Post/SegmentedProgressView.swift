@@ -8,86 +8,93 @@
 
 import UIKit
 class SegmentedProgressView: UIView {
-//    override func draw(_ rect: CGRect) {
-//        let aPath = UIBezierPath()
-//
-//        aPath.move(to: CGPoint(x:20, y:50))
-//
-//        aPath.addLine(to: CGPoint(x:300, y:50))
-//
-//        //Keep using the method addLineToPoint until you get to the one where about to close the path
-//
-//        aPath.close()
-//
-//        //If you want to stroke it with a red color
-//        UIColor.red.set()
-//        aPath.stroke()
-//        //If you want to fill it as well
-//        aPath.fill()
-//
-//
-//        let shapeLayer = CAShapeLayer()
-//        shapeLayer.path = aPath.cgPath
-//        shapeLayer.strokeColor = UIColor.yellow.withAlphaComponent(0.5).cgColor
-//        shapeLayer.lineWidth = 10
-//        layer.addSublayer(shapeLayer)
-//
-//    }
     
     
+
+    //MARK: - Properties
     var aPath: UIBezierPath = UIBezierPath()
     let shapeLayer = CAShapeLayer()
+    var segments = [UIView]()
+    
+//    fileprivate let verticalLine : UIView = {
+//        let view = UIView()
+////        view.backgroundColor = .red
+//        return view
+//    }()
+    
+    //MARK: - Draw Rect
+    override func draw(_ rect: CGRect) {
+        //draw a straight line with UIBenzierPath
+        // Specify the point that the path should start get drawn and close it.
+        aPath.move(to: CGPoint(x: 0.0, y: 0.0))
+        aPath.addLine(to: CGPoint(x: self.frame.size.width, y: 0.0))
+        aPath.move(to: CGPoint(x: 0.0, y: 0.0))
+        aPath.close()
+        handleSetUpTrackLayer()
+        handleSetUpShapeLayer()
+        
+//        addSubview(verticalLine)
+//        verticalLine.centerInSuperview(size: .init(width: 5, height: 6))
+//        verticalLine.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -3).isActive = true
+    }
 
-   
-    
-    
-
-    
-    
-    
-        override func draw(_ rect: CGRect) {
-            
-            //draw a rect with uibezier path
-            // Specify the point that the path should start get drawn.
-                   aPath.move(to: CGPoint(x: 0.0, y: 0.0))
-                
-//                   // Create a line between the starting point and the bottom-left side of the view.
-//                   aPath.addLine(to: CGPoint(x: 0.0, y: self.frame.size.height))
-//
-                   // Create the bottom line (bottom-left to bottom-right).
-            aPath.addLine(to: CGPoint(x: self.frame.size.width, y: 0.0))
-                
-            aPath.move(to: CGPoint(x: 0.0, y: 0.0))
-
-                   // Create the vertical line from the bottom-right to the top-right side.
-//                   aPath.addLine(to: CGPoint(x: self.frame.size.width, y: self.frame.size.height))
-    
-            //Keep using the method addLineToPoint until you get to the one where about to close the path
-    
-            aPath.close()
-
-            
-           let trackLayer = CAShapeLayer()
-           trackLayer.path = aPath.cgPath
-           trackLayer.lineWidth = 6
-           trackLayer.strokeColor = UIColor.white.withAlphaComponent(0.5).cgColor
-           trackLayer.lineCap = .round
-           trackLayer.strokeEnd = 1
-           layer.addSublayer(trackLayer)
 
     
-            //set the path of a shapelayer to the uibenzier path
-            shapeLayer.path = aPath.cgPath
-            shapeLayer.strokeColor = snapchatBlueColor.cgColor
-            shapeLayer.lineWidth = 6
-            shapeLayer.strokeEnd = 0
-            shapeLayer.lineCap = .round
-            layer.addSublayer(shapeLayer)
-            
-            
-           
+    //MARK: - Handlers
+    fileprivate func handleSetUpTrackLayer() {
+        let trackLayer = CAShapeLayer()
+        trackLayer.path = aPath.cgPath
+        trackLayer.lineWidth = 6
+        trackLayer.strokeColor = UIColor.white.withAlphaComponent(0.2).cgColor
+        trackLayer.lineCap = .round
+        trackLayer.strokeEnd = 1
+        layer.addSublayer(trackLayer)
 
-//
+    }
+    
+    
+    fileprivate func handleSetUpShapeLayer() {
+        //set the path of a shapelayer to the uibenzier path
+        shapeLayer.path = aPath.cgPath
+        shapeLayer.strokeColor = snapchatBlueColor.cgColor
+        shapeLayer.lineWidth = 6
+        shapeLayer.strokeEnd = 0
+        shapeLayer.lineCap = .round
+        layer.addSublayer(shapeLayer)
+    }
+    
+    
+    func setProgress(_ progress: CGFloat) {
+        shapeLayer.strokeEnd = progress
+      
+    }
+    
+    
+    func pauseProgress() {
+        let newSegment = handleCreateSegment()
+        addSubview(newSegment)
+        newSegment.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -3).isActive = true
+        segments.append(newSegment)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // your code here
+            self.handlePositionSegment(newSegment: newSegment)
         }
-
+    }
+    
+    
+    fileprivate func handlePositionSegment(newSegment: UIView) {
+        let positionPath = CGPoint(x: shapeLayer.strokeEnd * frame.width, y: 0)
+        newSegment.frame.origin.x = positionPath.x
+        newSegment.backgroundColor = .white
+    }
+    
+    
+    
+    fileprivate func handleCreateSegment() -> UIView {
+         let view = UIView()
+         view.translatesAutoresizingMaskIntoConstraints = false
+         view.constrainWidth(constant: 5)
+         view.constrainHeight(constant: 6)
+        return view
+    }
 }
