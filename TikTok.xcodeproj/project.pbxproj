@@ -18,6 +18,7 @@
 		E9158A8A2505ED4000CB202F /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9158A892505ED4000CB202F /* MenuBar.swift */; };
 		E9158A9425090E3E00CB202F /* BaseHomeFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9158A9325090E3E00CB202F /* BaseHomeFeedCell.swift */; };
 		E9158A972509129900CB202F /* VerticalFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9158A962509129900CB202F /* VerticalFeedCell.swift */; };
+		E92A590525AD0C250032BA52 /* Pulsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A590425AD0C250032BA52 /* Pulsing.swift */; };
 		E94DA3D6254BBA2D00D2B54E /* CreatePostMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94DA3D5254BBA2D00D2B54E /* CreatePostMenuBar.swift */; };
 		E953464C25117EA700E26F67 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E953464B25117EA700E26F67 /* ProfileCell.swift */; };
 		E953464E2512E13A00E26F67 /* ProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E953464D2512E13A00E26F67 /* ProfileHeader.swift */; };
@@ -58,7 +59,6 @@
 		E9F798E5253285D300218CD3 /* NotificationsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F798E4253285D300218CD3 /* NotificationsCell.swift */; };
 		E9F7F2A52505C1D000D2ED5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F7F2A42505C1D000D2ED5E /* AppDelegate.swift */; };
 		E9F7F2A72505C1D000D2ED5E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F7F2A62505C1D000D2ED5E /* SceneDelegate.swift */; };
-		E9F7F2A92505C1D000D2ED5E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F7F2A82505C1D000D2ED5E /* ViewController.swift */; };
 		E9F7F2AE2505C1D300D2ED5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9F7F2AD2505C1D300D2ED5E /* Assets.xcassets */; };
 		E9F7F2B12505C1D300D2ED5E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E9F7F2AF2505C1D300D2ED5E /* LaunchScreen.storyboard */; };
 		E9F7F2B92505C2E800D2ED5E /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F7F2B82505C2E800D2ED5E /* MainTabBarController.swift */; };
@@ -80,6 +80,7 @@
 		E9158A892505ED4000CB202F /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		E9158A9325090E3E00CB202F /* BaseHomeFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseHomeFeedCell.swift; sourceTree = "<group>"; };
 		E9158A962509129900CB202F /* VerticalFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalFeedCell.swift; sourceTree = "<group>"; };
+		E92A590425AD0C250032BA52 /* Pulsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pulsing.swift; sourceTree = "<group>"; };
 		E94DA3D5254BBA2D00D2B54E /* CreatePostMenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostMenuBar.swift; sourceTree = "<group>"; };
 		E953464B25117EA700E26F67 /* ProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
 		E953464D2512E13A00E26F67 /* ProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeader.swift; sourceTree = "<group>"; };
@@ -121,7 +122,6 @@
 		E9F7F2A12505C1D000D2ED5E /* TikTok.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TikTok.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9F7F2A42505C1D000D2ED5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E9F7F2A62505C1D000D2ED5E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		E9F7F2A82505C1D000D2ED5E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E9F7F2AD2505C1D300D2ED5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E9F7F2B02505C1D300D2ED5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E9F7F2B22505C1D300D2ED5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -242,6 +242,7 @@
 				E9011F4C253516F200376AE6 /* SearchCustomization.swift */,
 				E9011F4E25351B8700376AE6 /* Constants.swift */,
 				E9A087CE256F83F8006C984A /* PhotosAPI.swift */,
+				E92A590425AD0C250032BA52 /* Pulsing.swift */,
 			);
 			path = "Support Files";
 			sourceTree = "<group>";
@@ -368,7 +369,6 @@
 				E9158A832505E3B800CB202F /* Controllers */,
 				E9158A822505E3B000CB202F /* Views */,
 				E9158A812505E3AA00CB202F /* Model */,
-				E9F7F2A82505C1D000D2ED5E /* ViewController.swift */,
 				E9F7F2AD2505C1D300D2ED5E /* Assets.xcassets */,
 				E9F7F2AF2505C1D300D2ED5E /* LaunchScreen.storyboard */,
 				E9F7F2B22505C1D300D2ED5E /* Info.plist */,
@@ -508,7 +508,6 @@
 				E97AB9DE253202D100167B50 /* NotificationTypeCell.swift in Sources */,
 				E9158A852505E40E00CB202F /* HomeFeedController.swift in Sources */,
 				E9F798E5253285D300218CD3 /* NotificationsCell.swift in Sources */,
-				E9F7F2A92505C1D000D2ED5E /* ViewController.swift in Sources */,
 				E9011F4B25350C2900376AE6 /* DiscoverVC.swift in Sources */,
 				E9A087CB256F7B4C006C984A /* MediaMenuCell.swift in Sources */,
 				E9B6961125353A200084251C /* DiscoverCell.swift in Sources */,
@@ -538,6 +537,7 @@
 				E9E5C5E325313C77008D5881 /* NotificationsVC.swift in Sources */,
 				E9750112254B99C100A41DD9 /* CreatePostVC.swift in Sources */,
 				E96596C825221158000843F3 /* PresentationController.swift in Sources */,
+				E92A590525AD0C250032BA52 /* Pulsing.swift in Sources */,
 				E94DA3D6254BBA2D00D2B54E /* CreatePostMenuBar.swift in Sources */,
 				E9E4A1D12573F5A4007E11E9 /* SelectedAssetCell.swift in Sources */,
 				E9C9D8E12579652800AB2EB4 /* PreviewSelectedAssetsView.swift in Sources */,

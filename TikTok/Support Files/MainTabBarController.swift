@@ -81,7 +81,7 @@ class MainTabBarController: UITabBarController {
              let createPostImage = UIImage(named: "song")!.withRenderingMode(.alwaysTemplate)
 
         
-        let createPostViewController = handleNavigationControllers(controller: ViewController(), selectedImage: createPostSelectedImage, image: createPostImage, title: nil)
+        let createPostViewController = handleNavigationControllers(controller: UIViewController(), selectedImage: createPostSelectedImage, image: createPostImage, title: nil)
         
         
         let notificationsSelectedImage = UIImage(named: "notificationsSelectedImage")!.withRenderingMode(.alwaysTemplate)

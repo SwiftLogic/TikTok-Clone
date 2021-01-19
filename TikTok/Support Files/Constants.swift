@@ -23,6 +23,8 @@ let adjustclipsicon = UIImage(named: "adjustclipsicon")
 let microphoneIcon = UIImage(named: "microphoneIcon")
 let voiceEffectsIcon = UIImage(named: "voiceEffectsIcon")
 let musicIcon = UIImage(named: "addSoundsIcon")
+let secondmusicIcon = UIImage(named: "ic_music")
+
 let timeEffectsIcon = UIImage(named: "timeEffectsIcon")
 let emojiIcon = UIImage(named: "emojiIcon")
 let enterTextIcon = UIImage(named: "enterTextIcon")
@@ -41,6 +43,13 @@ let rightArrowIcon = UIImage(named: "rightArrowIcon")
 let selectedMediaCheckIcon = UIImage(named: "selectedMediaCheckIcon")
 let unselectedMediaCheckIcon = UIImage(named: "unselectedMediaCheckIcon")
 let expandAlbumsIcon = UIImage(named: "expandAlbumsIcon")
+let speedIcon = UIImage(named: "ic_speed")
+let beautyIcon = UIImage(named: "ic_beauty")
+
+let countDownTimerIcon = UIImage(named: "ic_countdowntimer")
+let flashIcon = UIImage(named: "ic_flash")
+
+
 
 
 

@@ -20,8 +20,25 @@ class ProfileHeader: UICollectionViewCell {
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpViews()
-        handleSetUpSetAttributedTexts()
+//        setUpViews()
+//        handleSetUpSetAttributedTexts()
+//
+        
+        let ovalView = OvalView()
+        addSubview(ovalView)
+        ovalView.backgroundColor = .clear
+        ovalView.centerInSuperview(size: .init(width: 300, height: 240))//.init(width: 150, height: 90))
+        
+        let triangleView = TrianglePointingView()
+        insertSubview(triangleView, belowSubview: ovalView)
+        triangleView.fillColor = .red
+        triangleView.anchor(top: ovalView.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: -43, left: 0, bottom: 0, right: 0), size: .init(width: 43, height: 120)) //w30, 60 h
+        triangleView.centerXAnchor.constraint(equalTo: ovalView.centerXAnchor, constant: -45).isActive = true //-20
+        triangleView.flipY()
+        triangleView.transform = triangleView.transform.rotated(by: .pi / 2)    // 90˚
+
+        
+        
     }
     
     
@@ -273,5 +290,83 @@ extension ProfileHeader: ProfileFilterViewDelegate {
         UIView.animate(withDuration: 0.3) {[weak self] in
             self?.invisibleUnderLineMenuBarView.frame.origin.x = xPosition
         }
+    }
+}
+
+
+class OvalView: UIView {
+    
+    override func draw(_ rect: CGRect) {
+        
+        var ovalPath = UIBezierPath(ovalIn: bounds)
+        UIColor.red.setFill()
+        ovalPath.fill()
+        
+//        let shapeLayer = CAShapeLayer()
+//        shapeLayer.path = ovalPath.cgPath
+//        shapeLayer.fillColor = UIColor.clear.cgColor
+//        shapeLayer.strokeColor = UIColor.blue.cgColor
+//        shapeLayer.lineWidth = 5.0
+//        self.layer.addSublayer(shapeLayer)
+     
+    }
+}
+
+
+
+class TrianglePointingView: UIView {
+    
+    var path: UIBezierPath!
+    
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        backgroundColor = UIColor.clear
+    }
+    
+    
+    var fillColor: UIColor = UIColor.white
+    var strokeColor: UIColor = UIColor.white
+    var borderWidthColor: CGColor = UIColor.clear.cgColor
+    
+    
+    override func draw(_ rect: CGRect) {
+        self.createTriangle()
+        
+        // Specify the fill color and apply it to the path.
+        fillColor.setFill()
+        path.fill()
+        
+        // Specify a border (stroke) color.
+        strokeColor.setStroke()
+        path.stroke()
+    }
+    
+    
+    
+    
+    func createTriangle() {
+        path = UIBezierPath()
+        path.move(to: CGPoint(x: self.frame.width/2, y: 0.0))
+        path.addLine(to: CGPoint(x: 0.0, y: self.frame.size.height)) //left line
+        path.addLine(to: CGPoint(x: self.frame.size.width, y: self.frame.size.height)) //right line
+        path.close()
+        
+        // Add border width to the triangle, only visible in Hashtag header
+        let borderLayer = CAShapeLayer()
+        borderLayer.path = path.cgPath//maskLayer.path // Reuse the Bezier path
+        borderLayer.fillColor = UIColor.clear.cgColor
+        borderLayer.strokeColor = borderWidthColor//baseWhiteColor.cgColor
+        borderLayer.lineWidth = 0.5
+        borderLayer.frame = bounds
+        layer.addSublayer(borderLayer)
+    }
+    
+    
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
 }

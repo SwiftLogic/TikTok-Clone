@@ -38,6 +38,8 @@ class CreatePostVC: UIViewController {
         navigationController?.navigationBar.isHidden = true
         if setUpSession() {
             perform(#selector(startSession), with: nil, afterDelay: 0.1)
+            print("strokeEnd: ", segmentedProgressView.shapeLayer.strokeEnd)
+
         }
     }
     
@@ -62,8 +64,11 @@ class CreatePostVC: UIViewController {
     var autoflashMode: Bool = false
     var activeInput: AVCaptureDeviceInput!
     var outPutURL: URL!
-    fileprivate var timeMin = 0
-    fileprivate var timeSec = 0
+    fileprivate var recordedClips = [URL]()
+    
+    fileprivate var videoDurationOfLastClip = 0 //
+    fileprivate var totalRecordedTime_In_Minutes = 0
+    fileprivate var total_RecordedTime_In_Secs = 0
     fileprivate weak var recordingTimer: Timer?
 
     
@@ -74,19 +79,14 @@ class CreatePostVC: UIViewController {
     lazy var previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
     
     fileprivate let captureButtonDimension: CGFloat = 68
-
-    let segmentedProgressView = SegmentedProgressView()
-
-//   let progressView: UIProgressView = {
-//        let progressView = UIProgressView()
-//        progressView.trackTintColor = UIColor.white.withAlphaComponent(0.2) //0.5
-//        progressView.progressTintColor = snapchatBlueColor
-//        progressView.clipsToBounds = true
-//        progressView.layer.cornerRadius = 2
-//        progressView.transform = progressView.transform.scaledBy(x: 1, y: 2.8)
-//        return progressView
-//    }()
     
+    let segmentedProgressViewPadding: CGFloat = 17.5
+     
+    lazy var segmentedProgressView = SegmentedProgressView(width: view.frame.width - segmentedProgressViewPadding)
+
+    fileprivate let buttonsDimension: CGFloat = 26//28
+    fileprivate let buttonsRightPadding: CGFloat = 17
+
     
      let cancelButton: UIButton = {
         let button = UIButton(type: .system)
@@ -120,15 +120,33 @@ class CreatePostVC: UIViewController {
        return button
    }()
     
-    
-    let captureButtonRingView: UIView = {
+    fileprivate let captureButtonRingViewDimension : CGFloat = 85
+
+    lazy var captureButtonRingView: UIView = {
         let view = UIView()
         view.layer.borderColor = UIColor.rgb(red: 254, green: 44, blue: 85).withAlphaComponent(0.5).cgColor
         view.layer.borderWidth = 6
-        view.layer.cornerRadius = 85 / 2
+        view.layer.cornerRadius = captureButtonRingViewDimension / 2
         view.clipsToBounds = true
+//        view.backgroundColor = UIColor.yellow.withAlphaComponent(0.5)
+        view.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDidTapRecordButton))
+        view.addGestureRecognizer(tapGesture)
         return view
     }()
+    
+//
+//    fileprivate let pulsingRingViewDimension : CGFloat = 125
+//    lazy var pulsingRingView: UIView = {
+//        let view = UIView()
+//        view.layer.borderColor = UIColor.rgb(red: 254, green: 44, blue: 85).withAlphaComponent(0.5).cgColor
+//        view.layer.borderWidth = 10
+//        view.layer.cornerRadius = pulsingRingViewDimension / 2
+//        view.isUserInteractionEnabled = true
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDidTapRecordButton))
+//        view.addGestureRecognizer(tapGesture)
+//        return view
+//    }()
 
     
     
@@ -215,15 +233,169 @@ class CreatePostVC: UIViewController {
     
     lazy var revertCameraDirectionButton: UIButton = {
         let button = UIButton(type: .system)
-        let image = UIImage(named: "flipCameraIcon")?.withRenderingMode(.alwaysTemplate)
-        button.setImage(image, for: .normal)
+        button.setImage(flipCameraIcon, for: .normal)
         button.tintColor = .white
-        button.constrainWidth(constant: 30)
-        button.constrainHeight(constant: 30)
+        button.constrainWidth(constant: buttonsDimension) //30
+        button.constrainHeight(constant: buttonsDimension) //30
         button.addTarget(self, action: #selector(toggleCameraPosition), for: .touchUpInside)
         return button
     }()
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    let flipCameraLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Flip"
+        label.font = defaultFont(size: 10.5)
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
+    
+    let trimmedVideoNewLengthLabel: UILabelWithInsets = {
+        let label = UILabelWithInsets()
+        label.textInsets = .init(top: 0, left: 12, bottom: 0, right: 12)
+        label.textAlignment = .center
+        label.textColor = .clear
+        label.font = defaultFont(size: 14.5)//UIFont.boldSystemFont(ofSize: 15.5)
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 30 / 2
+//        label.text = "Sounds"
+        label.textColor = .white
+        label.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        
+        let fullString = NSMutableAttributedString(string: "")
+        // create our NSTextAttachment
+        let image1Attachment = NSTextAttachment()
+        image1Attachment.image = secondmusicIcon?.withRenderingMode(.alwaysOriginal)
+        // wrap the attachment in its own attributed string so we can append it
+        let image1String = NSAttributedString(attachment: image1Attachment)
+        // add the NSTextAttachment wrapper to our full string, then add some more text.
+        fullString.append(image1String)
+        fullString.append(NSAttributedString(string: " Sounds"))
+        // draw the result in a label
+        label.attributedText = fullString
+        return label
+    }()
+    
+    
+    
+    
+    
+    lazy var videoSpeedButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(speedIcon, for: .normal)
+        button.tintColor = .white
+        button.constrainWidth(constant: buttonsDimension)
+        button.constrainHeight(constant: buttonsDimension)
+//        button.addTarget(self, action: #selector(toggleCameraPosition), for: .touchUpInside)
+        return button
+    }()
+    
+    
+    let videoSpeedLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Speed"
+        label.font = defaultFont(size: 10.5)
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    
+    
+    
+    lazy var beautyButton: UIButton = {
+           let button = UIButton(type: .system)
+           button.setImage(beautyIcon, for: .normal)
+           button.tintColor = .white
+           button.constrainWidth(constant: buttonsDimension)
+           button.constrainHeight(constant: buttonsDimension)
+   //        button.addTarget(self, action: #selector(toggleCameraPosition), for: .touchUpInside)
+           return button
+       }()
+           
+           
+           let beautyLabel: UILabel = {
+               let label = UILabel()
+               label.text = "Beauty"
+               label.font = defaultFont(size: 10.5)
+               label.textColor = .white
+               label.translatesAutoresizingMaskIntoConstraints = false
+               return label
+           }()
+    
+    
+    
+    lazy var filtersButton: UIButton = {
+            let button = UIButton(type: .system)
+            button.setImage(effectsIcon, for: .normal)
+            button.tintColor = .white
+            button.constrainWidth(constant: buttonsDimension)
+            button.constrainHeight(constant: buttonsDimension)
+    //        button.addTarget(self, action: #selector(toggleCameraPosition), for: .touchUpInside)
+            return button
+        }()
+        
+        
+        let filtersLabel: UILabel = {
+            let label = UILabel()
+            label.text = "Filters"
+            label.font = defaultFont(size: 10.5)
+            label.textColor = .white
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
+    
+    
+    
+    lazy var countDownTimerButton: UIButton = {
+            let button = UIButton(type: .system)
+            button.setImage(countDownTimerIcon, for: .normal)
+            button.tintColor = .white
+            button.constrainWidth(constant: buttonsDimension)
+            button.constrainHeight(constant: buttonsDimension)
+    //        button.addTarget(self, action: #selector(toggleCameraPosition), for: .touchUpInside)
+            return button
+        }()
+        
+        
+        let countDownTimerLabel: UILabel = {
+            let label = UILabel()
+            label.text = "Timer"
+            label.font = defaultFont(size: 10.5)
+            label.textColor = .white
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
+    
+    
+    
+    lazy var flashButton: UIButton = {
+            let button = UIButton(type: .system)
+            button.setImage(flashIcon, for: .normal)
+            button.tintColor = .white
+            button.constrainWidth(constant: buttonsDimension)
+            button.constrainHeight(constant: buttonsDimension)
+    //        button.addTarget(self, action: #selector(toggleCameraPosition), for: .touchUpInside)
+            return button
+        }()
+        
+        
+        let flashLabel: UILabel = {
+            let label = UILabel()
+            label.text = "Flash"
+            label.font = defaultFont(size: 10.5)
+            label.textColor = .white
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
        
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     
     fileprivate let recordingTimeLabel: UILabel = {
         let label = UILabel()
@@ -243,11 +415,10 @@ class CreatePostVC: UIViewController {
     
     //MARK: - Handlers
     fileprivate func setUpViews() {
-        let padding: CGFloat = 17.5
         view.addSubview(segmentedProgressView)
         segmentedProgressView.constrainToTop(paddingTop: 12)
         segmentedProgressView.centerXInSuperview()
-        segmentedProgressView.constrainWidth(constant: view.frame.width - padding)
+        segmentedProgressView.constrainWidth(constant: view.frame.width - segmentedProgressViewPadding)
         segmentedProgressView.constrainHeight(constant: 6)
         
         
@@ -267,7 +438,7 @@ class CreatePostVC: UIViewController {
         
         view.addSubview(captureButtonRingView)
          
-        captureButtonRingView.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: nil, padding: .init(top: 0, left: 0, bottom: 65, right: 0), size: .init(width: 85, height: 85))
+        captureButtonRingView.anchor(top: nil, leading: nil, bottom: view.bottomAnchor, trailing: nil, padding: .init(top: 0, left: 0, bottom: 65, right: 0), size: .init(width: captureButtonRingViewDimension, height: captureButtonRingViewDimension))
          captureButtonRingView.centerXInSuperview()
          
          view.addSubview(captureButton)
@@ -276,7 +447,7 @@ class CreatePostVC: UIViewController {
          captureButton.constrainHeight(constant: captureButtonDimension)
          captureButton.constrainWidth(constant: captureButtonDimension)
 
-         
+ 
         view.addSubview(rightGuildeLineView)
         rightGuildeLineView.anchor(top: captureButtonRingView.topAnchor, leading: captureButtonRingView.trailingAnchor, bottom: captureButtonRingView.bottomAnchor, trailing: view.trailingAnchor)
          
@@ -306,11 +477,97 @@ class CreatePostVC: UIViewController {
         leftGuildeLineView.addSubview(effectsLabel)
          effectsLabel.topAnchor.constraint(equalTo: effectsButton.bottomAnchor, constant: 2.5).isActive = true
         effectsLabel.centerXAnchor.constraint(equalTo: effectsButton.centerXAnchor).isActive = true
+        
+        
+        
+        
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        
+        view.addSubview(trimmedVideoNewLengthLabel)
+        trimmedVideoNewLengthLabel.anchor(top: segmentedProgressView.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 15, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 30))
+        trimmedVideoNewLengthLabel.centerXInSuperview()
+        
+        
         
         view.addSubview(revertCameraDirectionButton)
         revertCameraDirectionButton.anchor(top: cancelButton.topAnchor, leading: nil, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 12))
+        
+        
+       
+        view.addSubview(flipCameraLabel)
+        flipCameraLabel.topAnchor.constraint(equalTo: revertCameraDirectionButton.bottomAnchor, constant: 4).isActive = true
+        flipCameraLabel.centerXAnchor.constraint(equalTo: revertCameraDirectionButton.centerXAnchor).isActive = true
+        
+        
+        view.addSubview(videoSpeedButton)
+        videoSpeedButton.anchor(top: revertCameraDirectionButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 35, left: 0, bottom: 0, right: 0), size: .init(width: buttonsDimension, height: buttonsDimension))
+        videoSpeedButton.centerXAnchor.constraint(equalTo: (revertCameraDirectionButton).centerXAnchor).isActive = true
 
+               
+            
+        view.addSubview(videoSpeedLabel)
+        videoSpeedLabel.topAnchor.constraint(equalTo: (videoSpeedButton).bottomAnchor, constant: 4).isActive = true
+        videoSpeedLabel.centerXAnchor.constraint(equalTo: (videoSpeedButton).centerXAnchor).isActive = true
+        
+               
+
+        
+        view.addSubview(beautyButton)
+        beautyButton.anchor(top: videoSpeedButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 38, left: 0, bottom: 0, right: buttonsRightPadding), size: .init(width: buttonsDimension, height: buttonsDimension))
+        beautyButton.centerXAnchor.constraint(equalTo: (revertCameraDirectionButton).centerXAnchor).isActive = true
+        
+        
+        view.addSubview(beautyLabel)
+        beautyLabel.topAnchor.constraint(equalTo: (beautyButton).bottomAnchor, constant: 4).isActive = true
+        beautyLabel.centerXAnchor.constraint(equalTo: (beautyButton).centerXAnchor).isActive = true
+        
+
+        
+        
+        
+        view.addSubview(filtersButton)
+       filtersButton.anchor(top: beautyButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 38, left: 0, bottom: 0, right: buttonsRightPadding), size: .init(width: buttonsDimension, height: buttonsDimension))
+       filtersButton.centerXAnchor.constraint(equalTo: (revertCameraDirectionButton).centerXAnchor).isActive = true
+       
+       
+       view.addSubview(filtersLabel)
+       filtersLabel.topAnchor.constraint(equalTo: (filtersButton).bottomAnchor, constant: 4).isActive = true
+       filtersLabel.centerXAnchor.constraint(equalTo: (filtersButton).centerXAnchor).isActive = true
+               
+        
+        
+        view.addSubview(countDownTimerButton)
+        countDownTimerButton.anchor(top: filtersButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 38, left: 0, bottom: 0, right: buttonsRightPadding), size: .init(width: buttonsDimension, height: buttonsDimension))
+        countDownTimerButton.centerXAnchor.constraint(equalTo: (revertCameraDirectionButton).centerXAnchor).isActive = true
+             
+             
+             view.addSubview(countDownTimerLabel)
+             countDownTimerLabel.topAnchor.constraint(equalTo: (countDownTimerButton).bottomAnchor, constant: 4).isActive = true
+             countDownTimerLabel.centerXAnchor.constraint(equalTo: (countDownTimerButton).centerXAnchor).isActive = true
+                     
+               
+        
+        
+        view.addSubview(flashButton)
+       flashButton.anchor(top: countDownTimerButton.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 38, left: 0, bottom: 0, right: buttonsRightPadding), size: .init(width: buttonsDimension, height: buttonsDimension))
+       flashButton.centerXAnchor.constraint(equalTo: (revertCameraDirectionButton).centerXAnchor).isActive = true
+            
+            
+            view.addSubview(flashLabel)
+            flashLabel.topAnchor.constraint(equalTo: (flashButton).bottomAnchor, constant: 4).isActive = true
+            flashLabel.centerXAnchor.constraint(equalTo: (flashButton).centerXAnchor).isActive = true
+                    
+                      
+        
+        
+        
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            
         
         let save_discardButtonsStacView = UIStackView(arrangedSubviews: [discardRecordingButton, saveRecordingButton])
         save_discardButtonsStacView.axis = .horizontal
@@ -362,20 +619,66 @@ class CreatePostVC: UIViewController {
     
     
     @objc fileprivate func handleDiscardLastRecordedClip() {
-        FileManager.default.clearTmpDirectory()
-        outPutURL = nil
-        thumbnailImage = nil
-        segmentedProgressView.setProgress(0)
+//        FileManager.default.clearTmpDirectory()
+        outPutURL = nil //remove current clip url that was juast discarded
+        thumbnailImage = nil //remove current thumbnail image
+        recordedClips.removeLast() //remove discarded clip from clips array
+        handleSetNewOutPutURLAndThumbnailImage()
+        segmentedProgressView.handleRemoveLastSegment()
         handleResetAllVisibilityToIdentity()
+        if recordedClips.isEmpty == true {
+            handleResetTimersAndProgressViewToZero()
+        } else if recordedClips.isEmpty == false {
+            handleCalculateDurationLeft()
+        }
     }
     
     
+    @objc fileprivate func handleSetNewOutPutURLAndThumbnailImage() {
+        outPutURL = recordedClips.last
+        let currentUrl: URL? = outPutURL
+        guard let currentUrlUnwrapped = currentUrl else {return}
+        guard let generatedThumbnailImage = generateVideoThumbnail(withfile: currentUrlUnwrapped) else {return}
+        if currentCameraDevice?.position == .front {
+            //if front camera we mirror the thumbnail image, else keep the same orientation the same
+            thumbnailImage = didTakePicture(generatedThumbnailImage, to: .upMirrored)
+        } else {
+            thumbnailImage = generatedThumbnailImage
+        }
+    }
+    
+    /// this subtracts the discarded clip's duration from the currentTime duration of our video
+    fileprivate func handleCalculateDurationLeft() {
+        let timeToDiscard = videoDurationOfLastClip
+        let currentCombineTime = total_RecordedTime_In_Secs
+        let newVideoDuration = currentCombineTime - timeToDiscard
+        total_RecordedTime_In_Secs = newVideoDuration
+        let countDownSec: Int = Int(currentMaxRecordingDuration)  - total_RecordedTime_In_Secs / 10
+        recordingTimeLabel.text = "\(countDownSec)s"
+    }
+    
     @objc func handleResetAllVisibilityToIdentity() {
-        [discardRecordingButton, saveRecordingButton].forEach { (subView) in
-            subView.alpha = 0
+        if recordedClips.isEmpty == true {
+            openMediaPickerButton.isHidden = false
+            openMediaPickerView.isHidden = false
+            uploadLabel.isHidden = false
+            createPostMenuBar.isHidden = false
+            discardRecordingButton.alpha = 0
+            saveRecordingButton.alpha = 0
+            print("recordedClips:", "isEmpty")
+        } else {
+            openMediaPickerButton.isHidden = true
+            openMediaPickerView.isHidden = true
+            uploadLabel.isHidden = true
+            createPostMenuBar.isHidden = true
+            discardRecordingButton.alpha = 1
+            saveRecordingButton.alpha = 1
+            print("recordedClips:", "is not Empty")
+
         }
         
-        [self.createPostMenuBar, self.effectsLabel, self.effectsButton, self.uploadLabel, self.openMediaPickerButton, self.openMediaPickerView, self.revertCameraDirectionButton, self.cancelButton].forEach { (subView) in
+        
+        [self.effectsLabel, self.effectsButton, self.revertCameraDirectionButton, self.cancelButton].forEach { (subView) in
             subView.isHidden = false
         }
         
@@ -383,6 +686,7 @@ class CreatePostVC: UIViewController {
             perform(#selector(startSession), with: nil, afterDelay: 0.1)
         }
     }
+    
     
     @objc fileprivate func handleDismiss() {
         FileManager.default.clearTmpDirectory()
@@ -403,8 +707,12 @@ class CreatePostVC: UIViewController {
     
     @objc fileprivate func handleDidTapRecordButton() {
         handleAnimateRecordButton()
-        startRecording()
+        startRecording()        
     }
+    
+    
+    
+ 
     
     var isRecording = false
     fileprivate func handleAnimateRecordButton() {
@@ -428,11 +736,12 @@ class CreatePostVC: UIViewController {
                self.captureButton.layer.cornerRadius = self.captureButtonDimension / 2
                self.captureButtonRingView.transform = CGAffineTransform.identity
                 
-               self.discardRecordingButton.alpha = 1
-
-               [self.createPostMenuBar, self.effectsLabel, self.effectsButton, self.revertCameraDirectionButton, self.cancelButton].forEach { (subView) in
-                    subView.isHidden = false
-                }
+                self.handleResetAllVisibilityToIdentity()
+//               self.discardRecordingButton.alpha = 1
+//
+//               [self.createPostMenuBar, self.effectsLabel, self.effectsButton, self.revertCameraDirectionButton, self.cancelButton].forEach { (subView) in
+//                    subView.isHidden = false
+//                }
              }
         }) {[weak self] (onComplete) in
             guard let self = self else {return}
@@ -651,8 +960,7 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
                 
                 outPutURL = tempURL()
                 movieOutput.startRecording(to: outPutURL, recordingDelegate: self)
-                segmentedProgressView.setProgress(0)
-
+//                segmentedProgressView.setProgress(0)
 
             }
         } else {
@@ -676,7 +984,8 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
     //MARK: - AVCaptureFileOutputRecordingDelegate
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         //
-        print("recording now")
+        recordedClips.append(fileURL)
+        print("recordedClips:", recordedClips.count)
         startTimer()
         
     }
@@ -687,6 +996,7 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
         } else {
             ///at this point we do not have access to the phhasset yet because its yet to be created, however we do have access to the temp url and we can generate a thumbnail from that using AVAssetImageGenerator. we generate the real asset to be exported to DB later in the mediaPreviewView itsself upon setting the URL setter
             let urlOfVideoRecorded = outPutURL! as URL
+
             guard let generatedThumbnailImage = generateVideoThumbnail(withfile: urlOfVideoRecorded) else {return}
             if currentCameraDevice?.position == .front {
                 //if front camera we mirror the thumbnail image, else keep the same orientation the same
@@ -706,8 +1016,10 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
     fileprivate func startTimer(){
         // if you want the timer to reset to 0 every time the user presses record you can uncomment out either of these 2 lines
         
-         timeSec = 0
+//         timeSec = 0
         // timeMin = 0
+        
+        videoDurationOfLastClip = 0
   
         stopTimer() // stop it at it's current time before starting it again
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
@@ -720,37 +1032,37 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
     
     
     @objc fileprivate func timerTick(){
-        timeSec += 1
+        total_RecordedTime_In_Secs += 1
+        videoDurationOfLastClip += 1
+        
        let time_limit = currentMaxRecordingDuration * 10
-       if timeSec == time_limit {
+       if total_RecordedTime_In_Secs == time_limit {
            handleDidTapRecordButton()
        }
        let startTime = 0
        let trimmedTime: Int = Int(currentMaxRecordingDuration)  - startTime
-       let positiveOrZero = max(timeSec, 0) //makes sure it doesnt go below 0 i.e no negative readings
+       let positiveOrZero = max(total_RecordedTime_In_Secs, 0) //makes sure it doesnt go below 0 i.e no negative readings
        let progress = Float(positiveOrZero) / Float(trimmedTime) / 10
         segmentedProgressView.setProgress(CGFloat(progress))
-        let countDownSec: Int = Int(currentMaxRecordingDuration)  - timeSec / 10
+        let countDownSec: Int = Int(currentMaxRecordingDuration)  - total_RecordedTime_In_Secs / 10
         recordingTimeLabel.text = "\(countDownSec)s"
     }
     
     
     // resets both vars back to 0 and when the timer starts again it will start at 0
-    @objc fileprivate func resetTimerToZero(){
-        timeSec = 0
-        timeMin = 0
+    @objc fileprivate func handleResetTimersAndProgressViewToZero(){
+        total_RecordedTime_In_Secs = 0
+        totalRecordedTime_In_Minutes = 0
+        videoDurationOfLastClip = 0
         stopTimer()
+        segmentedProgressView.setProgress(0)
+        recordingTimeLabel.text = "\(currentMaxRecordingDuration)s"
+
     }
-    
-    // if you need to reset the timer to 0 and yourLabel.txt back to 00:00
-    @objc  func resetTimerAndLabel(){
-        resetTimerToZero()
-    }
-    
+
     // stops the timer at it's current time
     @objc  func stopTimer(){
         recordingTimer?.invalidate()
-        
     }
        
 }
