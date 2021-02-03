@@ -823,3 +823,33 @@ class UILabelWithInsets : UILabel {
         
     }
 }
+
+
+
+
+public func handleSetUpAttributedText(titleString: String, secondString: String, mainColor: UIColor, mainfont: UIFont, secondColor: UIColor, subFont: UIFont, lastString: String, usernameMentionColor: UIColor, usernameString: String) -> NSMutableAttributedString {
+       
+       let mainAttributes = [NSAttributedString.Key.foregroundColor : mainColor, NSAttributedString.Key.font : mainfont]
+       let mainAttributedText = NSMutableAttributedString(string: titleString, attributes: mainAttributes)
+       
+       
+       let usernameAttributes = [NSAttributedString.Key.foregroundColor : usernameMentionColor, NSAttributedString.Key.font : subFont]
+
+       let usernameTextAttribute = NSMutableAttributedString(string: usernameString, attributes: usernameAttributes)
+       
+       let subAttributes = [NSAttributedString.Key.foregroundColor : secondColor, NSAttributedString.Key.font : subFont]
+       
+       let subAttributedText = NSMutableAttributedString(string: secondString, attributes: subAttributes)
+       
+       let lastAttributes = [NSAttributedString.Key.foregroundColor : secondColor, NSAttributedString.Key.font : subFont]
+
+       let lastAttributedText = NSMutableAttributedString(string: lastString, attributes: lastAttributes)
+       
+       
+       mainAttributedText.append(subAttributedText)
+       mainAttributedText.append(usernameTextAttribute)
+       mainAttributedText.append(lastAttributedText)
+
+       
+       return mainAttributedText
+   }

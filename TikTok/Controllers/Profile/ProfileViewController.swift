@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 fileprivate let cellReuseIdentifier = "cellReuseIdentifier"
 fileprivate let headerReuseIdentifier = "headerReuseIdentifier"
 fileprivate let footerReuseIdentifier = "footerReuseIdentifier"
@@ -21,11 +22,9 @@ class ProfileViewController: UICollectionViewController, UICollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpCollectionView()
-        setUpNavItems()
         setUpTabbarVisibility()
-        
-        
-        
+        setUpNavItems()
+        self.currentUser = CURRENT_USER
     }
     
     
@@ -49,7 +48,14 @@ class ProfileViewController: UICollectionViewController, UICollectionViewDelegat
 //    override var prefersStatusBarHidden: Bool {
 //      return false
 //    }
-//    
+//
+    
+    
+     var currentUser: User? {
+        didSet {
+            navigationItem.title = currentUser?.username//handleSetUpUsers().username
+        }
+    }
     
     
 
@@ -67,7 +73,6 @@ class ProfileViewController: UICollectionViewController, UICollectionViewDelegat
     
     fileprivate func setUpNavItems() {
         navigationController?.setNavigationBarBorderColor(.clear) //removes navline
-        navigationItem.title = handleSetUpUsers().username
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "•••", style: .plain, target: self, action: #selector(handleCustomPresentations))
     }
     
@@ -89,6 +94,10 @@ class ProfileViewController: UICollectionViewController, UICollectionViewDelegat
             tabBarWasVisibleOnViewDidLoad = true
         }
     }
+    
+    
+    
+    
     
     func handleSetUpUsers() -> TikTokUser {
       let profileImageUrl = "https://firebasestorage.googleapis.com/v0/b/imessage-f5d42.appspot.com/o/message_images%2Ffd02304e-6875-4c6a-a75c-d387f453077d?alt=media&token=b5d716eb-dd6e-4349-8a64-b246a820410e"

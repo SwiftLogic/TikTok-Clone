@@ -8,6 +8,7 @@
 
 import Photos
 import UIKit
+import Firebase
 let barcodeIcon = UIImage(named: "barcode")
 let magnifyIconInsideSearchbar = UIImage(named: "magnifying-search-lenses-tool")
 let cancelIcon = UIImage(named: "cancelButtonIcon")
@@ -48,13 +49,31 @@ let beautyIcon = UIImage(named: "ic_beauty")
 
 let countDownTimerIcon = UIImage(named: "ic_countdowntimer")
 let flashIcon = UIImage(named: "ic_flash")
+let userIcon = UIImage(named: "user")
+let smalluserIcon = UIImage(named: "ic_smalluser")
+let smallfacebookIcon = UIImage(named: "facebook_ic")
+let googleIcon = UIImage(named: "google_ic")
+let twitterIcon = UIImage(named: "twitter_ic")
+let appleIcon = UIImage(named: "apple_ic")
+let swipeRightArrow_ic = UIImage(named: "swiperightArrow_ic")
 
 
 
 
 
 
+  var CURRENT_USER: User?
 
+ func handleFetchCurrentUser() {
+    guard let currentUid = Auth.auth().currentUser?.uid else {return}
+    Database.database().reference().child("users").child(currentUid).observeSingleEvent(of: .value, with: { (snapshot) in
+        guard let dict = snapshot.value as? [String : Any] else {return}
+        let user = User(uid: snapshot.key, dictionary: dict)
+        CURRENT_USER = user
+    }) { (error) in
+        print("failed to fetch current user:", error.localizedDescription)
+    }
+}
 
 
 

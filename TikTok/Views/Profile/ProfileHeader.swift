@@ -18,11 +18,8 @@ import Kingfisher
 class ProfileHeader: UICollectionViewCell {
     
     //MARK: - Init
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-//        setUpViews()
-//        handleSetUpSetAttributedTexts()
-//
+    fileprivate func ovalViewSetUpView() {
+        
         
         let ovalView = OvalView()
         addSubview(ovalView)
@@ -35,10 +32,14 @@ class ProfileHeader: UICollectionViewCell {
         triangleView.anchor(top: ovalView.bottomAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: -43, left: 0, bottom: 0, right: 0), size: .init(width: 43, height: 120)) //w30, 60 h
         triangleView.centerXAnchor.constraint(equalTo: ovalView.centerXAnchor, constant: -45).isActive = true //-20
         triangleView.flipY()
-        triangleView.transform = triangleView.transform.rotated(by: .pi / 2)    // 90˚
-
-        
-        
+        triangleView.transform = triangleView.transform.rotated(by: .pi / 2)
+    }
+    
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setUpViews()
+        handleSetUpSetAttributedTexts()
     }
     
     

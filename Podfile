@@ -13,5 +13,6 @@ target 'TikTok' do
   pod 'Firebase/Storage'
   pod 'Firebase/Core'
   pod 'Firebase/Messaging'
+  pod 'SVProgressHUD'
 
 end

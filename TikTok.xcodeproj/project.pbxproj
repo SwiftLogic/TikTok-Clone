@@ -18,8 +18,13 @@
 		E9158A8A2505ED4000CB202F /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9158A892505ED4000CB202F /* MenuBar.swift */; };
 		E9158A9425090E3E00CB202F /* BaseHomeFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9158A9325090E3E00CB202F /* BaseHomeFeedCell.swift */; };
 		E9158A972509129900CB202F /* VerticalFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9158A962509129900CB202F /* VerticalFeedCell.swift */; };
+		E919A35825BB9DE900CEB8AB /* CaptchaVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E919A35725BB9DE900CEB8AB /* CaptchaVerificationView.swift */; };
 		E92A590525AD0C250032BA52 /* Pulsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A590425AD0C250032BA52 /* Pulsing.swift */; };
+		E94715A825B8807A0018FBB2 /* BirthdayVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94715A725B8807A0018FBB2 /* BirthdayVC.swift */; };
+		E94715AA25B88D850018FBB2 /* EnterEmailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94715A925B88D850018FBB2 /* EnterEmailVC.swift */; };
+		E94CDDD825C902120055ED9E /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94CDDD725C902120055ED9E /* User.swift */; };
 		E94DA3D6254BBA2D00D2B54E /* CreatePostMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94DA3D5254BBA2D00D2B54E /* CreatePostMenuBar.swift */; };
+		E94EC88B25B8CF4600D02F09 /* CreatePasswordVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94EC88A25B8CF4600D02F09 /* CreatePasswordVC.swift */; };
 		E953464C25117EA700E26F67 /* ProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E953464B25117EA700E26F67 /* ProfileCell.swift */; };
 		E953464E2512E13A00E26F67 /* ProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E953464D2512E13A00E26F67 /* ProfileHeader.swift */; };
 		E9534650251304F900E26F67 /* ProfileFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E953464F251304F900E26F67 /* ProfileFilterView.swift */; };
@@ -54,6 +59,7 @@
 		E9C9D8E325796BA100AB2EB4 /* PreviewSelectedAssetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C9D8E225796BA100AB2EB4 /* PreviewSelectedAssetCell.swift */; };
 		E9D156592532964400141CB4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E9D156582532964400141CB4 /* GoogleService-Info.plist */; };
 		E9D58644251989960042BD6E /* TikTokDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D58643251989960042BD6E /* TikTokDetailsVC.swift */; };
+		E9D6AF8C25C7953800F57FFF /* CreateUsernameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6AF8B25C7953800F57FFF /* CreateUsernameVC.swift */; };
 		E9E4A1D12573F5A4007E11E9 /* SelectedAssetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E4A1D02573F5A4007E11E9 /* SelectedAssetCell.swift */; };
 		E9E5C5E325313C77008D5881 /* NotificationsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E5C5E225313C77008D5881 /* NotificationsVC.swift */; };
 		E9F798E5253285D300218CD3 /* NotificationsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F798E4253285D300218CD3 /* NotificationsCell.swift */; };
@@ -80,8 +86,13 @@
 		E9158A892505ED4000CB202F /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		E9158A9325090E3E00CB202F /* BaseHomeFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseHomeFeedCell.swift; sourceTree = "<group>"; };
 		E9158A962509129900CB202F /* VerticalFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalFeedCell.swift; sourceTree = "<group>"; };
+		E919A35725BB9DE900CEB8AB /* CaptchaVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptchaVerificationView.swift; sourceTree = "<group>"; };
 		E92A590425AD0C250032BA52 /* Pulsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pulsing.swift; sourceTree = "<group>"; };
+		E94715A725B8807A0018FBB2 /* BirthdayVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayVC.swift; sourceTree = "<group>"; };
+		E94715A925B88D850018FBB2 /* EnterEmailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterEmailVC.swift; sourceTree = "<group>"; };
+		E94CDDD725C902120055ED9E /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E94DA3D5254BBA2D00D2B54E /* CreatePostMenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePostMenuBar.swift; sourceTree = "<group>"; };
+		E94EC88A25B8CF4600D02F09 /* CreatePasswordVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordVC.swift; sourceTree = "<group>"; };
 		E953464B25117EA700E26F67 /* ProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
 		E953464D2512E13A00E26F67 /* ProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeader.swift; sourceTree = "<group>"; };
 		E953464F251304F900E26F67 /* ProfileFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFilterView.swift; sourceTree = "<group>"; };
@@ -116,6 +127,7 @@
 		E9C9D8E225796BA100AB2EB4 /* PreviewSelectedAssetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSelectedAssetCell.swift; sourceTree = "<group>"; };
 		E9D156582532964400141CB4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E9D58643251989960042BD6E /* TikTokDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikTokDetailsVC.swift; sourceTree = "<group>"; };
+		E9D6AF8B25C7953800F57FFF /* CreateUsernameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUsernameVC.swift; sourceTree = "<group>"; };
 		E9E4A1D02573F5A4007E11E9 /* SelectedAssetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedAssetCell.swift; sourceTree = "<group>"; };
 		E9E5C5E225313C77008D5881 /* NotificationsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsVC.swift; sourceTree = "<group>"; };
 		E9F798E4253285D300218CD3 /* NotificationsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsCell.swift; sourceTree = "<group>"; };
@@ -179,6 +191,10 @@
 			isa = PBXGroup;
 			children = (
 				E97CDDAB250EEB9500E44F7A /* AuthViewController.swift */,
+				E94715A725B8807A0018FBB2 /* BirthdayVC.swift */,
+				E94715A925B88D850018FBB2 /* EnterEmailVC.swift */,
+				E94EC88A25B8CF4600D02F09 /* CreatePasswordVC.swift */,
+				E9D6AF8B25C7953800F57FFF /* CreateUsernameVC.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -207,6 +223,7 @@
 		E9158A822505E3B000CB202F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				E919A35625BB9D8C00CEB8AB /* Auth */,
 				E9750113254B9B4E00A41DD9 /* Create Post */,
 				E9B6960F25353A0A0084251C /* Discover */,
 				E97AB9DA2531F70D00167B50 /* Notifications */,
@@ -254,6 +271,22 @@
 				E9158A962509129900CB202F /* VerticalFeedCell.swift */,
 			);
 			path = Feed;
+			sourceTree = "<group>";
+		};
+		E919A35625BB9D8C00CEB8AB /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				E919A35725BB9DE900CEB8AB /* CaptchaVerificationView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		E94CDDD625C901FC0055ED9E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E94CDDD725C902120055ED9E /* User.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		E953464A25117E9300E26F67 /* Profile */ = {
@@ -365,6 +398,7 @@
 		E9F7F2A32505C1D000D2ED5E /* TikTok */ = {
 			isa = PBXGroup;
 			children = (
+				E94CDDD625C901FC0055ED9E /* Models */,
 				E9158A862505EB3100CB202F /* Support Files */,
 				E9158A832505E3B800CB202F /* Controllers */,
 				E9158A822505E3B000CB202F /* Views */,
@@ -500,6 +534,7 @@
 				E97CDDAC250EEB9500E44F7A /* AuthViewController.swift in Sources */,
 				E9A087CF256F83F8006C984A /* PhotosAPI.swift in Sources */,
 				E9C8F2EA251D7FA900D8E3E5 /* TikTokUser.swift in Sources */,
+				E919A35825BB9DE900CEB8AB /* CaptchaVerificationView.swift in Sources */,
 				E9BC549A250A7064005CDA27 /* VideoCacheManager.swift in Sources */,
 				E9AAE8C2256F4B01007085A0 /* MediaPickerVC.swift in Sources */,
 				E9FD142A25715E5D0044003E /* PhotoAlbumCell.swift in Sources */,
@@ -509,16 +544,21 @@
 				E9158A852505E40E00CB202F /* HomeFeedController.swift in Sources */,
 				E9F798E5253285D300218CD3 /* NotificationsCell.swift in Sources */,
 				E9011F4B25350C2900376AE6 /* DiscoverVC.swift in Sources */,
+				E94EC88B25B8CF4600D02F09 /* CreatePasswordVC.swift in Sources */,
 				E9A087CB256F7B4C006C984A /* MediaMenuCell.swift in Sources */,
 				E9B6961125353A200084251C /* DiscoverCell.swift in Sources */,
 				E9C9D8E325796BA100AB2EB4 /* PreviewSelectedAssetCell.swift in Sources */,
 				E96596CA252211EA000843F3 /* OverlayController.swift in Sources */,
 				E9A087C7256F730A006C984A /* MediaPickerBaseCell.swift in Sources */,
 				E99F41FA2513B5A90041276D /* ProfileFilterOptions.swift in Sources */,
+				E94CDDD825C902120055ED9E /* User.swift in Sources */,
 				E9158A972509129900CB202F /* VerticalFeedCell.swift in Sources */,
 				E97B083D2572B809005DA30E /* SelectedAssetsView.swift in Sources */,
 				E9139C0025A95E5C00435513 /* SegmentedProgressView.swift in Sources */,
+				E9D6AF8C25C7953800F57FFF /* CreateUsernameVC.swift in Sources */,
+				E94715AA25B88D850018FBB2 /* EnterEmailVC.swift in Sources */,
 				E9F7F2A52505C1D000D2ED5E /* AppDelegate.swift in Sources */,
+				E94715A825B8807A0018FBB2 /* BirthdayVC.swift in Sources */,
 				E9011F4D253516F200376AE6 /* SearchCustomization.swift in Sources */,
 				E97AB9E02532036900167B50 /* NotificationType.swift in Sources */,
 				E9534650251304F900E26F67 /* ProfileFilterView.swift in Sources */,

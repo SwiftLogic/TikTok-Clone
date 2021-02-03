@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 class MainTabBarController: UITabBarController {
     
     
@@ -14,11 +15,19 @@ class MainTabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        handleSetUpViewControllers()
+//        handleSetUpViewControllers()
         tabBar.tintColor = .black
         tabBar.unselectedItemTintColor = .lightGray
         delegate = self
         setTabBarToTransparent()
+        checkIfUserIsLoggedIn()
+//
+//          let firebaseAuth = Auth.auth()
+//        do {
+//          try firebaseAuth.signOut()
+//        } catch let signOutError as NSError {
+//          print ("Error signing out: %@", signOutError)
+//        }
 
     }
     
@@ -111,7 +120,7 @@ class MainTabBarController: UITabBarController {
         progressView.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: 0).isActive = true
         
         
-        
+        handleFetchCurrentUser()
         viewControllers = [homeViewController, discoverViewController, createPostViewController, notificationsViewController, profileViewController]
         
         guard let items = self.tabBar.items else {return}
@@ -152,6 +161,27 @@ class MainTabBarController: UITabBarController {
         tabBar.backgroundColor = .white
     }
     
+    
+    
+    func checkIfUserIsLoggedIn() {
+           if Auth.auth().currentUser == nil {
+               
+               DispatchQueue.main.async {
+                   self.handlePresentLoginVc()
+                
+               }
+           } else {
+              handleSetUpViewControllers()
+           }
+       }
+    
+    
+    fileprivate func handlePresentLoginVc() {
+        let authVC = AuthViewController(authType: .signUp)
+        let navController = UINavigationController(rootViewController: authVC)
+        navController.modalPresentationStyle = .fullScreen //or .overFullScreen for transparency
+        present(navController, animated: true, completion: nil)
+    }
     
 }
 

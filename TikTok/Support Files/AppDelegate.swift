@@ -16,18 +16,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        FirebaseApp.configure()
+
         window = UIWindow()
        window?.makeKeyAndVisible()
        window?.clipsToBounds = true
        window?.layer.cornerRadius = 6
 //       window?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] //layerMinXMinYCorner = top left, layerMaxXMinYCorner = top left
+        
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: defaultFont(size: 18)]
+        UINavigationBar.appearance().titleTextAttributes = attributes
+        
+        
        let rootViewController = MainTabBarController()
        window?.rootViewController = rootViewController
         UINavigationBar.appearance().barTintColor = UIColor.white
         UINavigationBar.appearance().tintColor = UIColor.black
         UITabBar.appearance().tintColor = .black
         UITabBar.appearance().barTintColor = UIColor.white
-        FirebaseApp.configure()
         return true
     }
 
