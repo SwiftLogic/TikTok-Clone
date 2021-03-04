@@ -57,6 +57,12 @@ let twitterIcon = UIImage(named: "twitter_ic")
 let appleIcon = UIImage(named: "apple_ic")
 let swipeRightArrow_ic = UIImage(named: "swiperightArrow_ic")
 
+let alightRight_ic = UIImage(named: "align-right")
+let alightLeft_ic = UIImage(named: "align-left")
+let alightCenter_ic = UIImage(named: "align-center")
+
+let play_ic_filled = UIImage(named: "play")
+
 
 
 

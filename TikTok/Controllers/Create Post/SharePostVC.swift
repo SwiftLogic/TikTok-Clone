@@ -7,9 +7,24 @@
 //
 
 import UIKit
+import Firebase
+import SVProgressHUD
 class SharePostVC: UIViewController {
     
     //MARK: Init
+    init(videoUrl: URL) {
+        self.originalVideoURL = videoUrl
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    
+    //MARK: - View LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -18,13 +33,24 @@ class SharePostVC: UIViewController {
     }
     
     
+    override func viewWillAppear(_ animated: Bool) {
+       super.viewWillAppear(animated)
+       handleRefreshNavigationBar()
+        saveVideoTobeUploadedToServerToTempDirectory(sourceURL: originalVideoURL) {[weak self] (outputURL) in
+            self?.encodedVideoURL = outputURL
+            print("encodedVideoURL:", outputURL)
+        }
+    
+       
+    }
     
     
     //MARK: - Properties
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        handleRefreshNavigationBar()
-     }
+    
+    fileprivate let originalVideoURL: URL
+    fileprivate var encodedVideoURL: URL?
+    
+    
     
    
     
@@ -56,6 +82,7 @@ class SharePostVC: UIViewController {
         button.titleEdgeInsets = .init(top: 2, left: 0, bottom: 0, right: -5)
         button.clipsToBounds = true
         button.layer.cornerRadius = 2
+        button.addTarget(self, action: #selector(handleDidTapUploadButton), for: .touchUpInside)
         return button
     }()
     
@@ -430,6 +457,109 @@ class SharePostVC: UIViewController {
     }
     
    
+    //MARK: - Target Selectors
+    @objc func handleDidTapUploadButton() {
+        //first check if there is network before proceeding with upload to storage
+        if Reachability.isConnectedToNetwork() {
+//            print("Yes there is network")
+            uploadVideoUrlToStorage()
+        } else {
+//            print("No network!!")
+            presentNetworkErrorMessage()
+        }
+    }
+    
+    
+    
+    @objc func uploadVideoUrlToStorage() {
+            postButton.isEnabled = false
+            guard let encondedVideoUrlUnwrapped  = encodedVideoURL else {return}
+            
+            let filename = NSUUID().uuidString + ".mov"
+            let storageItem = Storage.storage().reference().child("post_videos")
+            
+            let uploadTask = storageItem.child(filename).putFile(from: encondedVideoUrlUnwrapped, metadata: nil) { (metadata, error) in
+                if let err = error {
+                    print("Failed to upload videoUrl to Database:", err.localizedDescription)
+                    handleNetworkCheck()
+                    SVProgressHUD.showError(withStatus: "Error uploading videoUrl to storage")
+                    SVProgressHUD.dismiss(withDelay: 2.5)
+                    return
+                }
+                
+                //grab download urlToStored item so we can save it in DB
+                storageItem.child(filename).downloadURL(completion: { (videoUrl, error) in
+                    if error != nil {
+                        print("Failed to download url:", error?.localizedDescription ?? "")
+                        SVProgressHUD.showError(withStatus: "Error downloading videourl's downloadURL")
+                        SVProgressHUD.dismiss(withDelay: 2.5)
+                        return
+                    }
+                    
+                    guard let videoUrlString = videoUrl?.absoluteString else {return}
+                    self.uploadThumbnailImageToStorage { (postImageUrl) in
+                        self.handleSavePostInfoToDB(postImageUrl: postImageUrl, videoUrlString: videoUrlString)
+                    }
+                })
+            }
+        }
+    
+    
+    
+    func uploadThumbnailImageToStorage(completion: @escaping (String) -> ()) {
+            let filename = NSUUID().uuidString
+            guard let selectedPhoto = thumbnailImageView.image else {return}
+            guard let uploadData = selectedPhoto.jpegData(compressionQuality: 1) else {return}
+            let storageItem = Storage.storage().reference().child("post_images")
+           let uploadTask = storageItem.child(filename).putData(uploadData, metadata: nil) { (metadata, error) in
+                if let err = error {
+                    print("Failed to upload Image Data to storage:", err.localizedDescription)
+                    handleNetworkCheck()
+                    SVProgressHUD.showError(withStatus: "Error uploading thumbnailImage to storage")
+                    SVProgressHUD.dismiss(withDelay: 2.5)
+                    return
+                }
+            
+            storageItem.child(filename).downloadURL(completion: { (imageUrl, error) in
+                if error != nil {
+                    print("Failed to download url:", error?.localizedDescription ?? "")
+                    SVProgressHUD.showError(withStatus: "Error downloading thumbnailImage")
+                    SVProgressHUD.dismiss(withDelay: 2.5)
+                    return
+                }
+                
+                //grab download urlToStored item so we can save it in DB
+                guard let postImageUrl = imageUrl?.absoluteString else {return}
+                completion(postImageUrl)
+            })
+            
+            }
+                        
+        }
+        
+       
+
+       
+        
+        
+    
+    
+    fileprivate func handleSavePostInfoToDB(postImageUrl: String, videoUrlString: String) {
+                
+        guard let currentUid = Auth.auth().currentUser?.uid else {return}
+               let ref = Database.database().reference().child("posts")
+               guard let postId = ref.childByAutoId().key else {return}
+        let postHashMap: [String: Any] = ["postImageUrl": postImageUrl, "videoUrl": videoUrlString, "caption": textView.text ?? "",  "creationDate": Date().timeIntervalSince1970, "ownerUid": currentUid, "likes": 0, "views": 0, "commentCount": 0]
+//               let postHashMap : [String : Any] = ["postImageUrl": "", "ownerUid": currentUid, "views": 0, "likes": 0, "caption": textView.text ?? ""]
+               ref.child(postId).setValue(postHashMap)
+               SVProgressHUD.showSuccess(withStatus: "Successfuly saved to db")
+               SVProgressHUD.dismiss(withDelay: 2.0)
+        dismiss(animated: true) {
+            FileManager.default.clearTmpDirectory()
+
+        }
+    }
+        
     
 }
 

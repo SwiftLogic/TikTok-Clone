@@ -118,7 +118,7 @@ class SegmentedProgressView: UIView {
         let positionPath = CGPoint(x: shapeLayer.strokeEnd * frame.width, y: 0)
         newSegment.constrainToLeft(paddingLeft: positionPath.x)
 //        newSegment.frame.origin.x = positionPath.x
-        newSegment.backgroundColor = .white
+        newSegment.backgroundColor = UIColor.white
         print("segmets:", segments.count)
     }
     
@@ -127,7 +127,7 @@ class SegmentedProgressView: UIView {
     fileprivate func handleCreateSegment() -> UIView {
          let view = UIView()
          view.translatesAutoresizingMaskIntoConstraints = false
-         view.constrainWidth(constant: 3)
+         view.constrainWidth(constant: 4)
          view.constrainHeight(constant: 6)
         return view
     }

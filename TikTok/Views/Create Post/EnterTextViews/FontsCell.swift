@@ -1,9 +1,9 @@
 //
-//  TemplatesCell.swift
+//  FontsCell.swift
 //  TikTok
 //
-//  Created by Osaretin Uyigue on 10/29/20.
-//  Copyright © 2020 Osaretin Uyigue. All rights reserved.
+//  Created by Osaretin Uyigue on 2/16/21.
+//  Copyright © 2021 Osaretin Uyigue. All rights reserved.
 //
 
 //
@@ -14,21 +14,32 @@
 //
 
 import UIKit
-class TemplatesCell: UICollectionViewCell {
+public let fontSizeInCell: CGFloat = 15
+class FontsCell: UICollectionViewCell {
     
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
-        backgroundColor = UIColor.blue.withAlphaComponent(0.5)
-
     }
     
     
     
     
     //MARK: - Properties
+    var font: UIFont! {
+        didSet {
+            guard let newFont = UIFont(name: font.fontName, size: fontSizeInCell) else {return}
+            label.font = newFont
+        }
+    }
     
+    
+     let label: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        return label
+    }()
     
     
     
@@ -39,7 +50,8 @@ class TemplatesCell: UICollectionViewCell {
     //MARK: - Handlers
     
     fileprivate func setUpViews() {
-        
+        addSubview(label)
+        label.centerInSuperview()
     }
     
     

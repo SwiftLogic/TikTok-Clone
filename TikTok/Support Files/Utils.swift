@@ -8,7 +8,7 @@
 
 import UIKit
 import Photos
-
+import SVProgressHUD
 
 import UIKit
 extension UIColor {
@@ -853,3 +853,137 @@ public func handleSetUpAttributedText(titleString: String, secondString: String,
        
        return mainAttributedText
    }
+
+
+
+
+
+public func saveVideoTobeUploadedToServerToTempDirectory(sourceURL: URL, completion: ((_ outputUrl: URL) -> Void)? = nil)
+{
+    let fileManager = FileManager.default
+    //        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    //
+    let documentDirectory = NSURL.fileURL(withPath: NSTemporaryDirectory(), isDirectory: true)
+    
+    let asset = AVAsset(url: sourceURL)
+    let length = Float(asset.duration.value) / Float(asset.duration.timescale)
+    print("video length: \(length) seconds")
+    
+    var outputURL = documentDirectory.appendingPathComponent("output")
+    do {
+        try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
+        outputURL = outputURL.appendingPathComponent("\(sourceURL.lastPathComponent).mp4")
+    }catch let error {
+        print(error)
+    }
+    
+    //Remove existing file
+    try? fileManager.removeItem(at: outputURL)
+    
+    guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else { return }
+    exportSession.outputURL = outputURL
+    exportSession.outputFileType = AVFileType.mp4
+    
+   
+    exportSession.exportAsynchronously {
+        switch exportSession.status {
+        case .completed:
+            print("exported at \(outputURL)")
+            completion?(outputURL)
+        case .failed:
+            print("failed \(exportSession.error.debugDescription)")
+        case .cancelled:
+            print("cancelled \(exportSession.error.debugDescription)")
+        default: break
+        }
+    }
+}
+
+
+  
+//MARK: - Network Utils
+//
+//  Reachability.swift
+//  DigAdmin
+//
+//  Created by Osaretin Uyigue on 5/17/18.
+//  Copyright © 2018 Osaretin Uyigue. All rights reserved.
+//
+import UIKit
+import SystemConfiguration
+class Reachability {
+    class func isConnectedToNetwork() -> Bool {
+        var zeroAddress = sockaddr_in()
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {$0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            
+            }
+            
+        }
+        
+        var flags = SCNetworkReachabilityFlags()
+        if !SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) {
+            return false
+        }
+        
+        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        return (isReachable && !needConnection)
+        
+    }
+    
+}
+
+
+
+
+
+ func presentNetworkErrorMessage() {
+    SVProgressHUD.showError(withStatus: "internet connection unavailable")
+    SVProgressHUD.dismiss(withDelay: 3)
+}
+
+ func checkForConnection() -> Bool {
+    var connectivityIsAvailable: Bool = false
+    //first check if there is network before proceeding with upload to storage
+    if Reachability.isConnectedToNetwork() {
+        print("Yes there is network")
+        connectivityIsAvailable = true
+    } else {
+        print("No network!!")
+        presentNetworkErrorMessage()
+        connectivityIsAvailable = false
+    }
+    
+    return connectivityIsAvailable
+}
+
+
+
+ func checkForConnectionWithOutSVProgressHud() -> Bool {
+    var connectivityIsAvailable: Bool = false
+    //first check if there is network before proceeding with upload to storage
+    if Reachability.isConnectedToNetwork() {
+        connectivityIsAvailable = true
+    } else {
+        connectivityIsAvailable = false
+    }
+    
+    return connectivityIsAvailable
+}
+
+ 
+ func handleNetworkCheck() {
+       //first check if there is network before proceeding with upload to storage
+       if Reachability.isConnectedToNetwork() {
+           print("Yes there is network")
+       } else {
+           print("No network!!")
+           presentNetworkErrorMessage()
+       }
+   }
+   
+
+
+ 

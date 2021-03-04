@@ -21,7 +21,7 @@ class MainTabBarController: UITabBarController {
         delegate = self
         setTabBarToTransparent()
         checkIfUserIsLoggedIn()
-//
+////
 //          let firebaseAuth = Auth.auth()
 //        do {
 //          try firebaseAuth.signOut()

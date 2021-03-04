@@ -193,9 +193,7 @@ class AuthViewController: UIViewController {
     
     
     @objc fileprivate func handleSetUpTargetSelectors() {
-        if authType == .signUp {
-            phoneOrEmailButton.addTarget(self, action: #selector(handleNavigateToNextVC), for: .touchUpInside)
-        }
+         phoneOrEmailButton.addTarget(self, action: #selector(handleNavigateToNextVC), for: .touchUpInside)
     }
     
     @objc fileprivate func handleDidTapSignButton() {
@@ -209,8 +207,13 @@ class AuthViewController: UIViewController {
     
     
     @objc fileprivate func handleNavigateToNextVC() {
-        let birthdayVC = BirthdayVC()
-        navigationController?.pushViewController(birthdayVC, animated: true)
+        if authType == .signUp {
+            let birthdayVC = BirthdayVC()
+            navigationController?.pushViewController(birthdayVC, animated: true)
+            } else {
+            let signInVC = SignInVC()
+            navigationController?.pushViewController(signInVC, animated: true)
+        }
     }
     
     

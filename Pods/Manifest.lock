@@ -1,4 +1,5 @@
 PODS:
+  - EasyTipView (2.1.0)
   - Firebase (6.14.0):
     - Firebase/Core (= 6.14.0)
   - Firebase/Auth (6.14.0):
@@ -107,9 +108,12 @@ PODS:
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
   - Protobuf (3.11.2)
+  - PryntTrimmerView (4.0.2)
   - SVProgressHUD (2.2.5)
+  - SwiftVideoGenerator (1.4.0)
 
 DEPENDENCIES:
+  - EasyTipView (~> 2.1)
   - Firebase
   - Firebase/Auth
   - Firebase/Core
@@ -117,10 +121,13 @@ DEPENDENCIES:
   - Firebase/Messaging
   - Firebase/Storage
   - Kingfisher (~> 5.0)
+  - PryntTrimmerView
   - SVProgressHUD
+  - SwiftVideoGenerator
 
 SPEC REPOS:
   trunk:
+    - EasyTipView
     - Firebase
     - FirebaseAnalytics
     - FirebaseAnalyticsInterop
@@ -142,9 +149,12 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
+    - PryntTrimmerView
     - SVProgressHUD
+    - SwiftVideoGenerator
 
 SPEC CHECKSUMS:
+  EasyTipView: a92b6edc377b81c5ac18e9fd35d5ee78e9409488
   Firebase: 0219bb4782eb1406f1b9b0628a2e625484ce910d
   FirebaseAnalytics: f68b9f3f1241385129ae0a83b63627fc420c05e5
   FirebaseAnalyticsInterop: d48b6ab67bcf016a05e55b71fc39c61c0cb6b7f3
@@ -166,8 +176,10 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   Protobuf: dd1aaea7140debfe4dd0683fb8ef208e527ae153
+  PryntTrimmerView: 6a43cc90df5d99addeabd33d4ba09b1365322130
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  SwiftVideoGenerator: 804637c18f68a4f205d806e305ebceb4adcf3d25
 
-PODFILE CHECKSUM: b1baa427ef6e623f72c7358b7451b70e364d02ad
+PODFILE CHECKSUM: 878c2a7e675870c4cf29fc0ffd760a74fc37237a
 
 COCOAPODS: 1.9.3

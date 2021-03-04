@@ -10,6 +10,7 @@ import UIKit
 import Photos
 import AVKit
 import AVFoundation
+import SVProgressHUD
 fileprivate let cameraCellReuseIdentifier = "cameraCellReuseIdentifier"
 fileprivate let templatesCellReuseIdentifier = "templatesCellReuseIdentifier"
 fileprivate let headerReuseIdentifier = "headerReuseIdentifier"
@@ -52,6 +53,7 @@ class CreatePostVC: UIViewController {
     
     
     fileprivate var thumbnailImage: UIImage?
+    fileprivate var maxVidDurationExhasuted = false
     fileprivate var currentMaxRecordingDuration: Int = 15 {
         didSet {
             recordingTimeLabel.text = "\(currentMaxRecordingDuration)s"
@@ -64,7 +66,7 @@ class CreatePostVC: UIViewController {
     var autoflashMode: Bool = false
     var activeInput: AVCaptureDeviceInput!
     var outPutURL: URL!
-    fileprivate var recordedClips = [URL]()
+    fileprivate var recordedClips = [VideoClips]()
     
     fileprivate var videoDurationOfLastClip = 0 //
     fileprivate var totalRecordedTime_In_Minutes = 0
@@ -626,6 +628,7 @@ class CreatePostVC: UIViewController {
         handleSetNewOutPutURLAndThumbnailImage()
         segmentedProgressView.handleRemoveLastSegment()
         handleResetAllVisibilityToIdentity()
+        maxVidDurationExhasuted = false
         if recordedClips.isEmpty == true {
             handleResetTimersAndProgressViewToZero()
         } else if recordedClips.isEmpty == false {
@@ -635,7 +638,7 @@ class CreatePostVC: UIViewController {
     
     
     @objc fileprivate func handleSetNewOutPutURLAndThumbnailImage() {
-        outPutURL = recordedClips.last
+        outPutURL = recordedClips.last?.videoUrl
         let currentUrl: URL? = outPutURL
         guard let currentUrlUnwrapped = currentUrl else {return}
         guard let generatedThumbnailImage = generateVideoThumbnail(withfile: currentUrlUnwrapped) else {return}
@@ -699,15 +702,24 @@ class CreatePostVC: UIViewController {
     
     @objc fileprivate func handlePreviewCapturedVideo() {
         if let thumbnailImageUnwrapped = thumbnailImage, let cameraPosition = currentCameraDevice?.position {
-            let previewVC = PreviewCapturedVideoVC(videoURLFromTempDirectory: outPutURL, thumbnailImage: thumbnailImageUnwrapped, cameraPosition: cameraPosition)
+            let previewVC = PreviewCapturedVideoVC(recordedClips: recordedClips)
             navigationController?.pushViewController(previewVC, animated: true)
         }
     }
     
     
     @objc fileprivate func handleDidTapRecordButton() {
-        handleAnimateRecordButton()
-        startRecording()        
+        if movieOutput.isRecording == false {
+            if maxVidDurationExhasuted == false {
+                startRecording()
+            } else {
+                SVProgressHUD.show(withStatus: "You cant record more")
+                SVProgressHUD.dismiss(withDelay: 1.0)
+            }
+        } else {
+            stopRecording()
+        }
+
     }
     
     
@@ -960,12 +972,14 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
                 
                 outPutURL = tempURL()
                 movieOutput.startRecording(to: outPutURL, recordingDelegate: self)
+                handleAnimateRecordButton()
 //                segmentedProgressView.setProgress(0)
 
             }
-        } else {
-            stopRecording()
         }
+//        else {
+//            stopRecording()
+//        }
     }
     
     
@@ -975,6 +989,7 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
             stopTimer()
             saveRecordingButton.alpha = 1
             segmentedProgressView.pauseProgress()
+            handleAnimateRecordButton()
             print("STOP THE COUNT!!!")
         }
     }
@@ -984,7 +999,8 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
     //MARK: - AVCaptureFileOutputRecordingDelegate
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         //
-        recordedClips.append(fileURL)
+        let newRecordedClip = VideoClips(videoUrl: fileURL, cameraPosition: currentCameraDevice?.position)
+        recordedClips.append(newRecordedClip)
         print("recordedClips:", recordedClips.count)
         startTimer()
         
@@ -1038,6 +1054,8 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
        let time_limit = currentMaxRecordingDuration * 10
        if total_RecordedTime_In_Secs == time_limit {
            handleDidTapRecordButton()
+           maxVidDurationExhasuted = true
+        
        }
        let startTime = 0
        let trimmedTime: Int = Int(currentMaxRecordingDuration)  - startTime

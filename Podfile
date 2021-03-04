@@ -14,5 +14,7 @@ target 'TikTok' do
   pod 'Firebase/Core'
   pod 'Firebase/Messaging'
   pod 'SVProgressHUD'
-
+  pod 'SwiftVideoGenerator'
+  pod 'EasyTipView', '~> 2.1'
+  pod 'PryntTrimmerView'
 end

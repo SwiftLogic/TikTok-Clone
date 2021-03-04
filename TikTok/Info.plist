@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>handwriting.otf</string>
+		<string>typeWritterFont.ttf</string>
+		<string>SERIBL__.ttf</string>
+		<string>NEON GLOW-Hollow.otf</string>
+	</array>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This lets you save and download photos from Tiktok to your phone</string>
 	<key>NSPhotoLibraryUsageDescription</key>

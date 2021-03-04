@@ -156,6 +156,7 @@ class CreateUsernameVC: UIViewController {
                        
                         print("Successfully saved user")
                         let mainTabbarVC = MainTabBarController()
+                        mainTabbarVC.modalPresentationStyle = .fullScreen
                         self.present(mainTabbarVC, animated: true) {
                             SVProgressHUD.showSuccess(withStatus: "Welcome To TikTok")
                             SVProgressHUD.setDefaultStyle(.dark)
