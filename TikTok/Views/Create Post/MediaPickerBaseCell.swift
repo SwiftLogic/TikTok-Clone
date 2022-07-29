@@ -69,7 +69,7 @@ class MediaPickerBaseCell: UICollectionViewCell {
     
     
     fileprivate let activityIndicatorView: UIActivityIndicatorView = {
-        let aiv = UIActivityIndicatorView(style: .white)
+        let aiv = UIActivityIndicatorView(style: .medium)
         aiv.color = UIColor.darkGray
         aiv.hidesWhenStopped = true
         aiv.startAnimating()

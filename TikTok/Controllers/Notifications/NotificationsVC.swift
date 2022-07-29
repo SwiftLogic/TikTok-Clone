@@ -83,7 +83,7 @@ class NotificationsVC: UIViewController {
         let label = UILabel()
         label.text = "All activity"
         label.textColor = .black
-        label.font = UIFont.boldSystemFont(ofSize: 17)//defaultFont(size: 16.5)
+        label.font = navBarFont(size: 17)//UIFont.boldSystemFont(ofSize: 17)//defaultFont(size: 16.5)
         label.textAlignment = .center
         label.isUserInteractionEnabled = false
         return label

@@ -15,6 +15,10 @@
 
 import UIKit
 import Kingfisher
+protocol ProfileHeaderDelegate: AnyObject {
+    func didTapEditProfile()
+    func didTapBookmark()
+}
 class ProfileHeader: UICollectionViewCell {
     
     //MARK: - Init
@@ -39,21 +43,25 @@ class ProfileHeader: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
-        handleSetUpSetAttributedTexts()
     }
     
     
     
     
     //MARK: - Properties
-    let mainFontSize: CGFloat = 16.0
+    weak var delegate: ProfileHeaderDelegate?
     
-    var user: TikTokUser! {
+    let mainFontSize: CGFloat = 17
+    
+    var user: User? {
         didSet {
-            usernameLabel.text = user.username
-            guard let url = URL(string: user.profileImageUrl) else {return}
-            profileImageView.kf.indicatorType = .activity
-            profileImageView.kf.setImage(with: url)
+            guard let user = user else {return}
+            usernameLabel.text = "@\(user.username)"
+            if let url = URL(string: user.profileImageUrl) {
+                profileImageView.kf.indicatorType = .activity
+                profileImageView.kf.setImage(with: url)
+            }
+            handleSetUpSetAttributedTexts(followingCount: user.followingCount, followersCount: user.followersCount, postCount: user.postCount)
             
         }
     }
@@ -77,7 +85,7 @@ class ProfileHeader: UICollectionViewCell {
     
     fileprivate let usernameLabel: UILabel = {
         let label = UILabel()
-        label.text = "@samisays11"
+        label.text = "_"
         label.font = defaultFont(size: 15.5)
         label.textAlignment = .center
         return label
@@ -88,6 +96,8 @@ class ProfileHeader: UICollectionViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.text = "_"
+
         return label
     }()
     
@@ -95,6 +105,8 @@ class ProfileHeader: UICollectionViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.text = "_"
+
         return label
     }()
     
@@ -104,19 +116,22 @@ class ProfileHeader: UICollectionViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.text = "_"
+
         return label
     }()
     
     
     
-    fileprivate let editButton: UIButton = {
+    fileprivate lazy var editButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Edit profile", for: .normal)
-        button.titleLabel?.font = defaultFont(size: 14.5)
+        button.titleLabel?.font = avenirBoldFont(size: 15.5)
         button.setTitleColor(.black, for: .normal)
         button.layer.borderWidth = 1
-        button.layer.borderColor = baseWhiteColor.cgColor//UIColor.lightGray.cgColor
+        button.layer.borderColor = lineSeperatorColor.cgColor
         button.layer.cornerRadius = 2
+        button.addTarget(self, action: #selector(handleDidTapEditProfile), for: .touchUpInside)
         return button
     }()
     
@@ -126,22 +141,22 @@ class ProfileHeader: UICollectionViewCell {
        let image = UIImage(named: "instagramIcon")?.withRenderingMode(.alwaysTemplate)
        button.setImage(image, for: .normal)
        button.layer.borderWidth = 1
-       button.layer.borderColor = baseWhiteColor.cgColor//UIColor.lightGray.cgColor
+        button.layer.borderColor = lineSeperatorColor.cgColor
        button.tintColor = .black
         button.layer.cornerRadius = 2
-
        return button
    }()
     
     
-    fileprivate let bookmarkButton: UIButton = {
+    fileprivate lazy var bookmarkButton: UIButton = {
         let button = UIButton(type: .system)
         let image = UIImage(named: "bookmark")?.withRenderingMode(.alwaysTemplate)
         button.setImage(image, for: .normal)
         button.layer.borderWidth = 1
-        button.layer.borderColor = baseWhiteColor.cgColor//UIColor.lightGray.cgColor
+        button.layer.borderColor = lineSeperatorColor.cgColor
         button.tintColor = .black
         button.layer.cornerRadius = 2
+        button.addTarget(self, action: #selector(didTapBookmarButton), for: .touchUpInside)
         return button
     }()
     
@@ -156,6 +171,16 @@ class ProfileHeader: UICollectionViewCell {
         let view = UIView()
         return view
     }()
+    
+    
+    fileprivate let bioLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Tap to add bio"
+        label.font = UIFont.systemFont(ofSize: 14)
+        label.textColor = .lightGray
+        label.textAlignment = .center
+        return label
+    }()
        
     
     //MARK: - Handlers
@@ -166,19 +191,19 @@ class ProfileHeader: UICollectionViewCell {
         
         
         
-        profileImageView.anchor(top: topAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 20, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 100))
+        profileImageView.anchor(top: topAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 15, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 100))
         profileImageView.centerXInSuperview()
         
         
-        usernameLabel.anchor(top: profileImageView.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 12, left: 8, bottom: 0, right: 8))
+        usernameLabel.anchor(top: profileImageView.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 15, left: 8, bottom: 0, right: 8))
         
         let stackView = UIStackView(arrangedSubviews: [followingCountLabel, followersCountLabel, likesCountLabel])
         stackView.axis = .horizontal
         stackView.spacing = 10
         stackView.distribution = .fillEqually
         addSubview(stackView)
-        let padding = frame.width * 0.10
-        stackView.anchor(top: usernameLabel.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 8, left: padding, bottom: 0, right: padding), size: .init(width: 0, height: 60))
+        let padding = frame.width * 0.13
+        stackView.anchor(top: usernameLabel.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 0, left: padding, bottom: 0, right: padding), size: .init(width: 0, height: 60))
         
         
         
@@ -187,29 +212,27 @@ class ProfileHeader: UICollectionViewCell {
 
         addSubview(firstVerticalLine)
         addSubview(secondVerticalLine)
+        addSubview(editButton)
+        addSubview(bookmarkButton)
+        
 
 
-        firstVerticalLine.anchor(top: nil, leading: followersCountLabel.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 0, left: -5, bottom: 0, right: 0),  size: .init(width: 1, height: 15))
-        firstVerticalLine.centerYAnchor.constraint(equalTo: followersCountLabel.centerYAnchor).isActive = true
+        firstVerticalLine.anchor(top: nil, leading: followersCountLabel.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 0, left: -5, bottom: 0, right: 0),  size: .init(width: 1, height: 20))
+        firstVerticalLine.centerYAnchor.constraint(equalTo: followersCountLabel.centerYAnchor, constant: 2).isActive = true
 
         
         
-        secondVerticalLine.anchor(top: nil, leading: followersCountLabel.trailingAnchor, bottom: nil, trailing: nil, padding: .init(top: 0, left: 5, bottom: 0, right: 0), size: .init(width: 1, height: 15))
-        secondVerticalLine.centerYAnchor.constraint(equalTo: followersCountLabel.centerYAnchor).isActive = true
+        secondVerticalLine.anchor(top: nil, leading: followersCountLabel.trailingAnchor, bottom: nil, trailing: nil, padding: .init(top: 0, left: 5, bottom: 0, right: 0), size: .init(width: 1, height: 20))
+        secondVerticalLine.centerYAnchor.constraint(equalTo: followersCountLabel.centerYAnchor, constant: 2).isActive = true
 
         let dimen: CGFloat = 42.5
-        addSubview(editButton)
         
-        editButton.anchor(top: stackView.bottomAnchor, leading: followingCountLabel.leadingAnchor, bottom: nil, trailing: secondVerticalLine.trailingAnchor, padding: .init(top: 5, left: 40, bottom: 0, right: -4), size: .init(width: 0, height: dimen))
-
+        editButton.anchor(top: stackView.bottomAnchor, leading: followingCountLabel.leadingAnchor, bottom: nil, trailing: bookmarkButton.leadingAnchor, padding: .init(top: 5, left: 30, bottom: 0, right: 3.5), size: .init(width: 0, height: dimen))
+//        likesCountLabel.backgroundColor = .red
         
 //        editButton.anchor(top: stackView.bottomAnchor, leading: stackView.leadingAnchor, bottom: nil, trailing: followersCountLabel.trailingAnchor, padding: .init(top: 5, left: 10, bottom: 0, right: 10), size: .init(width: 0, height: 45))
         
-        
-        
-        addSubview(bookmarkButton)
-        bookmarkButton.anchor(top: editButton.topAnchor, leading: editButton.trailingAnchor, bottom: editButton.bottomAnchor, trailing: nil, padding: .init(top: 0, left: 5, bottom: 0, right: 0), size: .init(width: dimen, height: 0))
-        //
+        bookmarkButton.anchor(top: editButton.topAnchor, leading: nil, bottom: editButton.bottomAnchor, trailing: likesCountLabel.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 0, right: 30), size: .init(width: dimen, height: 0))
         
 //        addSubview(instagramButton)
 //        instagramButton.anchor(top: editButton.topAnchor, leading: editButton.trailingAnchor, bottom: editButton.bottomAnchor, trailing: nil, padding: .init(top: 0, left: 5, bottom: 0, right: 0), size: .init(width: 45, height: 0))
@@ -229,7 +252,7 @@ class ProfileHeader: UICollectionViewCell {
        addSubview(secondHorizontalLine)
 
         
-        firstHorizontalLine.anchor(top: editButton.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 28, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 1))
+        firstHorizontalLine.anchor(top: editButton.bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 38, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 1))
         
 
         secondHorizontalLine.anchor(top: bottomAnchor, leading: leadingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: -1, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 1))
@@ -247,6 +270,10 @@ class ProfileHeader: UICollectionViewCell {
         
         invisibleUnderLineMenuBarView.addSubview(horizontalMenuBarView)
         horizontalMenuBarView.centerInSuperview(size: .init(width: 50, height: 2))
+        
+        
+        addSubview(bioLabel)
+        bioLabel.anchor(top: editButton.bottomAnchor, leading: followingCountLabel.leadingAnchor, bottom: firstHorizontalLine.topAnchor, trailing: likesCountLabel.trailingAnchor, padding: .init(top: 10, left: 0, bottom: 10, right: 0))
 
     }
     
@@ -255,14 +282,16 @@ class ProfileHeader: UICollectionViewCell {
     
     
     
-    fileprivate func handleSetUpSetAttributedTexts() {
-        followingCountLabel.attributedText = setupAttributedTextWithFonts(titleString: "2 \n", subTitleString: "Following", attributedTextColor: .lightGray, mainColor: .black, mainfont: UIFont.boldSystemFont(ofSize: mainFontSize), subFont: UIFont.systemFont(ofSize: 12.5))
+    fileprivate func handleSetUpSetAttributedTexts(followingCount: Int, followersCount: Int, postCount: Int) {
+        let subFont = UIFont(name: Fonts.acherusGrotesque, size: 12.5)!
+        let mainFont = avenirBoldFont(size: mainFontSize)//UIFont.boldSystemFont(ofSize: mainFontSize)
         
-        followersCountLabel.attributedText = setupAttributedTextWithFonts(titleString: "1 \n", subTitleString: "Followers", attributedTextColor: .lightGray, mainColor: .black, mainfont: UIFont.boldSystemFont(ofSize: mainFontSize), subFont: UIFont.systemFont(ofSize: 12.5))
+        followingCountLabel.attributedText = setupAttributedTextWithFonts(titleString: "\(followingCount) \n", subTitleString: "Following", attributedTextColor: .lightGray, mainColor: .black, mainfont: mainFont, subFont: subFont) //UIFont.systemFont(ofSize: 12.5)
         
-        likesCountLabel.attributedText = setupAttributedTextWithFonts(titleString: "0 \n", subTitleString: "Likes", attributedTextColor: .lightGray, mainColor: .black, mainfont: UIFont.boldSystemFont(ofSize: mainFontSize), subFont: UIFont.systemFont(ofSize: 12.5))
-
-               
+        
+        followersCountLabel.attributedText = setupAttributedTextWithFonts(titleString: "\(followersCount) \n", subTitleString: "Followers", attributedTextColor: .lightGray, mainColor: .black, mainfont: mainFont, subFont: subFont)
+        
+        likesCountLabel.attributedText = setupAttributedTextWithFonts(titleString: "\(postCount) \n", subTitleString: "Likes", attributedTextColor: .lightGray, mainColor: .black, mainfont: mainFont, subFont: subFont)
     }
     
     
@@ -270,6 +299,17 @@ class ProfileHeader: UICollectionViewCell {
         let view = UIView()
         view.backgroundColor = baseWhiteColor//UIColor.lightGray.withAlphaComponent(0.4)
         return view
+    }
+    
+    
+    //MARK: - Target Selector
+    @objc fileprivate func handleDidTapEditProfile() {
+        delegate?.didTapEditProfile()
+    }
+    
+    
+    @objc fileprivate func didTapBookmarButton() {
+        delegate?.didTapBookmark()
     }
     
     

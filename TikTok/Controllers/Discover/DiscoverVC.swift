@@ -51,7 +51,9 @@ class DiscoverVC: UICollectionViewController, UICollectionViewDelegateFlowLayout
     
     fileprivate let barCodeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(barcodeIcon?.withRenderingMode(.alwaysTemplate), for: .normal)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold, scale: .medium)
+        let normalImage = UIImage(systemName: "plus.viewfinder", withConfiguration: symbolConfig)!
+        button.setImage(normalImage.withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .black
         return button
     }()

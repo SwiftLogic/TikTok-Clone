@@ -34,7 +34,7 @@ class CommentInputTextView: UITextView {
         let label = UILabel()
         label.text = "Add comment..."
         label.textColor = UIColor.gray
-        label.font = UIFont(name: "Avenir-Roman", size: 16)!// 15.0)!
+        label.font = UIFont(name: "Avenir-Roman", size: 15)!// 15.0)!
         return label
     }()
     

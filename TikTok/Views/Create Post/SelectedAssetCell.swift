@@ -16,6 +16,9 @@ class SelectedAssetCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
+        layer.borderWidth = 0.5
+        layer.borderColor = baseWhiteColor.cgColor
+        layer.cornerRadius = 4
         handleSetUpViews()
         
 //        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleDidTapCancelButton))
@@ -36,7 +39,7 @@ class SelectedAssetCell: UICollectionViewCell {
         didSet {
             videoDurationLabel.isHidden = phAsset?.mediaType == .image ? true : false
             guard let asset = phAsset else {return}
-            let width = (frame.width)
+            let width = (frame.width * 4)
             let size = CGSize(width: width, height: width)
             imageView.image = getAssetThumbnail(asset: asset, size: size)
             let videoLegthInString = String(format: "%02d:%02d",Int((asset.duration / 60)),Int(asset.duration) % 60)
@@ -65,11 +68,11 @@ class SelectedAssetCell: UICollectionViewCell {
     
 
     fileprivate let videoDurationLabel: UILabel = {
-          let label = UILabel()
-          label.textColor = .white
-          label.font = UIFont.systemFont(ofSize: 12)
-          return label
-      }()
+        let label = UILabel()
+        label.textColor = .white
+        label.font = defaultFont(size: 12)
+        return label
+    }()
     
     
     fileprivate lazy var cancelSuperView: UIView = {

@@ -196,7 +196,7 @@ class TikTokMenuBarCell: UICollectionViewCell {
     let menuLabel: UILabel = {
         let label = UILabel()
         label.textColor = .lightGray
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.font = navBarFont(size: 14.5)//UIFont.boldSystemFont(ofSize: 16)
         return label
     }()
     

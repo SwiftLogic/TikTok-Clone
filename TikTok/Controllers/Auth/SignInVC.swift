@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-class SignInVC: UIViewController {
+class SignInVC: UIViewController, UITextFieldDelegate {
     
     //MARK: Init
     override func viewDidLoad() {
@@ -54,7 +54,7 @@ class SignInVC: UIViewController {
     }()
     
     
-    fileprivate let emailTextField: UITextField = {
+    fileprivate lazy var emailTextField: UITextField = {
         let tf = UITextField()
         tf.tintColor = tikTokRed
         tf.attributedPlaceholder = NSAttributedString(string: "Email Address", attributes: [
@@ -63,12 +63,13 @@ class SignInVC: UIViewController {
         ])
         tf.addTarget(self, action: #selector(handleValidateNextButton), for: .editingChanged)
         tf.keyboardType = .emailAddress
+        tf.delegate = self
         return tf
     }()
     
     
     
-    fileprivate let passwordTextField: UITextField = {
+    fileprivate lazy var passwordTextField: UITextField = {
         let tf = UITextField()
         tf.tintColor = tikTokRed
         tf.attributedPlaceholder = NSAttributedString(string: "Password", attributes: [
@@ -76,7 +77,8 @@ class SignInVC: UIViewController {
             .font: avenirRomanFont(size: 14.5)
         ])
         tf.addTarget(self, action: #selector(handleValidateNextButton), for: .editingChanged)
-        tf.keyboardType = .emailAddress
+        tf.isSecureTextEntry = true
+        tf.delegate = self
         return tf
     }()
     
@@ -209,15 +211,15 @@ class SignInVC: UIViewController {
                 SVProgressHUD.showError(withStatus: error?.localizedDescription)
                 SVProgressHUD.dismiss(withDelay: 2.0)
                 self?.logInButton.isEnabled = true
-            } else {
-                self?.uponSignInCompletion()
+                return
             }
+            self?.uponSignInCompletion()
+
         }
     }
     
     
     @objc fileprivate func uponSignInCompletion() {
-        print("Successfully saved user")
         let mainTabbarVC = MainTabBarController()
         mainTabbarVC.modalPresentationStyle = .fullScreen
         present(mainTabbarVC, animated: true) {
@@ -243,4 +245,18 @@ class SignInVC: UIViewController {
             logInButton.setTitleColor(.white, for: .normal)
         }
     }
+    
+    
+    
+    //Resign First Responders
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    //MARK: - UITextFieldDelegates
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+       textField.resignFirstResponder()
+       return true
+    }
+    
 }

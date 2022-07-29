@@ -25,9 +25,9 @@ struct Post {
       var views: Int
       var commentCount: Int
       let ownerUid: String
-      var user: TikTokUser
+      var user: User
     
-    init(user: TikTokUser, dictionary: [String:Any]) {
+    init(user: User, dictionary: [String:Any]) {
         self.user = user
         self.postId = dictionary["postId"] as? String ?? ""
         self.postImageUrl = dictionary["postImageUrl"] as? String ?? ""

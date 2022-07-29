@@ -66,6 +66,9 @@ class CreatePostMenuBar: UICollectionViewCell {
         let indexPath = IndexPath(item: 1, section: 0)
         collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        UIView.animate(withDuration: 0.3) {[weak self] in
+            self?.alpha = 1
+        }
     }
     
     fileprivate func setUpViews() {
@@ -81,7 +84,7 @@ class CreatePostMenuBar: UICollectionViewCell {
         whiteDotView.constrainToBottom(paddingBottom: -5)
         whiteDotView.constrainHeight(constant: 5)
         whiteDotView.constrainWidth(constant: 5)
-        
+        alpha = 0
         perform(#selector(scrollToItem), with: nil, afterDelay: 0.1)
     }
     

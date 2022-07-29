@@ -11,13 +11,15 @@
 //
 //  Created by Osaretin Uyigue on 4/29/19.
 //  Copyright © 2019 Osaretin Uyigue. All rights reserved.
-//
+
 
 import UIKit
 import AVKit
 import Photos
 protocol PreviewSelectedAssetsViewDelegate: class {
     func handleZoomBackToIdentity(zoomBackToThisAsset: PHAsset)
+    func detailsViewDidSelectMedia(asset: PHAsset)
+    func detailsViewDidDeSelectMedia(asset: PHAsset)
 }
 class PreviewSelectedAssetsView: UIView {
     
@@ -25,8 +27,9 @@ class PreviewSelectedAssetsView: UIView {
     
     //MARK: - Init
     //this how to do a custom init
-    required init(currentIndexPath: IndexPath, selectedAssets: [PHAsset]) {
+    required init(currentIndexPath: IndexPath, allMediaAssets: [PHAsset], selectedAssets: [PHAsset]) {
         self.currentIndexPath = currentIndexPath
+        self.allMediaAssets = allMediaAssets
         self.selectedAssets = selectedAssets
         super.init(frame: CGRect.zero)
         setUpViews()
@@ -43,7 +46,8 @@ class PreviewSelectedAssetsView: UIView {
     
     
     //MARK: - Properties
-    private let selectedAssets: [PHAsset]
+    private let allMediaAssets: [PHAsset]
+    private var selectedAssets: [PHAsset]
     var isOpeningForFirstTime = true
     var currentIndexPath: IndexPath
     weak var delegate: PreviewSelectedAssetsViewDelegate?
@@ -93,7 +97,7 @@ class PreviewSelectedAssetsView: UIView {
     
     //sets up first cell upon vie
       @objc fileprivate func handleSetUpFirstCellUponViewdidLoad() {
-          let asset = selectedAssets[currentIndexPath.item]
+          let asset = allMediaAssets[currentIndexPath.item]
         if asset.mediaType == .video {
               guard let cell = collectionView.cellForItem(at: currentIndexPath) as? PreviewSelectedAssetCell else {return}
             prepareToLoadVideoUrlIntoPlayer(asset, cell)
@@ -117,17 +121,36 @@ extension PreviewSelectedAssetsView: UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseId, for: indexPath) as! PreviewSelectedAssetCell
-        cell.phAsset = selectedAssets[indexPath.item]
-        let asset = selectedAssets[indexPath.item]
+        cell.phAsset = allMediaAssets[indexPath.item]
+        let asset = allMediaAssets[indexPath.item]
         let size = PHImageManagerMaximumSize
         cell.imageView.image = getAssetThumbnail(asset: asset, size: size)
         cell.phAsset = asset
         let videoLegthInString = String(format: "%02d:%02d",Int((asset.duration / 60)),Int(asset.duration) % 60)
         cell.videoDurationLabel.text = videoLegthInString
         cell.delegate = self
+        checkIfMediaIsSelected(asset: asset, cell: cell)
         return cell
     }
     
+    
+    private func checkIfMediaIsSelected(asset: PHAsset, cell: PreviewSelectedAssetCell) {
+        if selectedAssets.contains(asset) {
+            cell.selectedCheckIconImageView.image = selectedMediaCheckIcon?.withRenderingMode(.alwaysTemplate)
+            cell.selectedCheckIconImageView.backgroundColor = .white
+            cell.selectedCheckIconImageView.tintColor = tikTokRed
+            cell.selectedCheckIconImageView.layer.borderWidth = 1
+            cell.selectedCheckIconImageView.layer.borderColor = UIColor.white.cgColor
+            cell.selectedCountLabel.text = "Selected"
+        } else {
+            cell.selectedCheckIconImageView.image = unselectedMediaCheckIcon?.withRenderingMode(.alwaysTemplate)
+            cell.selectedCheckIconImageView.backgroundColor = .clear
+            cell.selectedCheckIconImageView.tintColor = .gray
+            cell.selectedCheckIconImageView.layer.borderWidth = 1
+            cell.selectedCheckIconImageView.layer.borderColor = UIColor.gray.cgColor
+            cell.selectedCountLabel.text = "Select"
+        }
+    }
     
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -143,7 +166,7 @@ extension PreviewSelectedAssetsView: UICollectionViewDelegate, UICollectionViewD
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        selectedAssets.count
+        allMediaAssets.count
     }
     
     
@@ -182,7 +205,7 @@ extension PreviewSelectedAssetsView: UICollectionViewDelegate, UICollectionViewD
         collectionView.isScrollEnabled = false //prevents user from scrolling too fast. the point is to slow down scroll speed
         perform(#selector(handleSwitchCollectionViewInteraction), with: nil, afterDelay: 0.5)
         
-        let asset = selectedAssets[indexPath.item]
+        let asset = allMediaAssets[indexPath.item]
         prepareToLoadVideoUrlIntoPlayer(asset, cell)
     }
     
@@ -198,6 +221,19 @@ extension PreviewSelectedAssetsView: PreviewSelectedAssetCellDelegate {
     func didTapCancelButton(asset: PHAsset) {
         removePeriodicTimeObserver()
         delegate?.handleZoomBackToIdentity(zoomBackToThisAsset: asset)
+    }
+    
+    func didSelect(asset: PHAsset, cell: PreviewSelectedAssetCell) {
+        if selectedAssets.contains(asset) {
+            guard let removeAtIndex = selectedAssets.firstIndex(of: asset) else {return}
+            selectedAssets.remove(at: removeAtIndex)
+            checkIfMediaIsSelected(asset: asset, cell: cell)
+            delegate?.detailsViewDidDeSelectMedia(asset: asset)
+        } else {
+            selectedAssets.append(asset)
+            checkIfMediaIsSelected(asset: asset, cell: cell)
+            delegate?.detailsViewDidSelectMedia(asset: asset)
+        }
     }
 }
 

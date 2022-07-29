@@ -102,11 +102,13 @@ PODS:
     - Kingfisher/Core (= 5.15.4)
   - Kingfisher/Core (5.15.4)
   - leveldb-library (1.22)
+  - lottie-ios (3.2.1)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - PanModal (1.2.7)
   - Protobuf (3.11.2)
   - PryntTrimmerView (4.0.2)
   - SVProgressHUD (2.2.5)
@@ -121,6 +123,8 @@ DEPENDENCIES:
   - Firebase/Messaging
   - Firebase/Storage
   - Kingfisher (~> 5.0)
+  - lottie-ios
+  - PanModal
   - PryntTrimmerView
   - SVProgressHUD
   - SwiftVideoGenerator
@@ -147,7 +151,9 @@ SPEC REPOS:
     - GTMSessionFetcher
     - Kingfisher
     - leveldb-library
+    - lottie-ios
     - nanopb
+    - PanModal
     - Protobuf
     - PryntTrimmerView
     - SVProgressHUD
@@ -174,12 +180,14 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 43b8b64263023d4f32caa0b40f4c8bfa3c5f36d8
   Kingfisher: 657dc1077e5bbbfff864194c79f29e35b722d062
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  lottie-ios: 106e92eaf11fbed0a76590b4cdb9b5ec26123ff7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  PanModal: 3e16ead1a907fb06f4df3f13492fd00149fa4974
   Protobuf: dd1aaea7140debfe4dd0683fb8ef208e527ae153
   PryntTrimmerView: 6a43cc90df5d99addeabd33d4ba09b1365322130
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   SwiftVideoGenerator: 804637c18f68a4f205d806e305ebceb4adcf3d25
 
-PODFILE CHECKSUM: 878c2a7e675870c4cf29fc0ffd760a74fc37237a
+PODFILE CHECKSUM: 25f28fe4b4ce697b697375c6fab94607c2b7c984
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

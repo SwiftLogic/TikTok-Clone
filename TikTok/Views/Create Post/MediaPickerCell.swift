@@ -50,27 +50,27 @@ class MediaPickerCell: UICollectionViewCell {
        
     
    
-        let videoDurationLabel: UILabel = {
-           let label = UILabel()
-           label.textColor = .white
-           label.font = UIFont.systemFont(ofSize: 12)
-           return label
-       }()
-       
-       
-        lazy var selectedCheckIconImageView: UIImageView = {
-           let imageview = UIImageView()
-           imageview.clipsToBounds = true
-           imageview.contentMode = .scaleAspectFill
-           imageview.translatesAutoresizingMaskIntoConstraints = false
-           imageview.layer.cornerRadius = 20 / 2
-           imageview.image = unselectedMediaCheckIcon?.withRenderingMode(.alwaysTemplate)
-           imageview.tintColor = .white
-           let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapCheckMark))
-           imageview.isUserInteractionEnabled = true
-           imageview.addGestureRecognizer(tapGesture)
-           return imageview
-       }()
+    let videoDurationLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 12)
+        return label
+    }()
+    
+    
+    lazy var selectedCheckIconImageView: UIImageView = {
+        let imageview = UIImageView()
+        imageview.clipsToBounds = true
+        imageview.contentMode = .scaleAspectFill
+        imageview.translatesAutoresizingMaskIntoConstraints = false
+        imageview.layer.cornerRadius = 20 / 2
+        imageview.image = unselectedMediaCheckIcon?.withRenderingMode(.alwaysTemplate)
+        imageview.tintColor = .white
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapCheckMark))
+        imageview.isUserInteractionEnabled = true
+        imageview.addGestureRecognizer(tapGesture)
+        return imageview
+    }()
     
     
     

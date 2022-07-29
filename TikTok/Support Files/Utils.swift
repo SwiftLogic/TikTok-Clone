@@ -723,6 +723,38 @@ func defaultFont(size: CGFloat)-> UIFont {
 }
 
 
+func navBarFont(size: CGFloat)-> UIFont {
+//    let defaultFont = UIFont(name: Fonts.soundsGood, size: size)!
+    let defaultFont = UIFont.systemFont(ofSize: size, weight: .heavy)
+
+    return defaultFont
+
+}
+
+func tikTokFont(size: CGFloat)-> UIFont {
+    let defaultFont = UIFont(name: Fonts.acherusGrotesque, size: size)!
+    return defaultFont
+
+}
+
+
+func appleSDGothicNeoMedium(size: CGFloat)-> UIFont {
+    let defaultFont = UIFont(name: "AppleSDGothicNeo-Medium", size: size)!
+    return defaultFont
+
+}
+
+func appleNeoBold(size: CGFloat)-> UIFont {
+    let defaultFont = UIFont(name: "AppleSDGothicNeo-Bold", size: size)!
+    return defaultFont
+
+    
+}
+func avenirBoldFont(size: CGFloat)-> UIFont {
+    let defaultFont = UIFont(name: "AvenirNext-Bold", size: size)!
+    return defaultFont
+}
+
 func avenirRomanFont(size: CGFloat)-> UIFont {
     let defaultFont = UIFont(name: "Avenir-Roman", size: size)!
     return defaultFont
@@ -987,3 +1019,5 @@ class Reachability {
 
 
  
+
+

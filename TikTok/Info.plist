@@ -2,21 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIAppFonts</key>
-	<array>
-		<string>handwriting.otf</string>
-		<string>typeWritterFont.ttf</string>
-		<string>SERIBL__.ttf</string>
-		<string>NEON GLOW-Hollow.otf</string>
-	</array>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This lets you save and download photos from Tiktok to your phone</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This lets you pick photos and videos to share on TikTok</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>To record audio, allow us to access your microphone</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This allows you to record videos</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -35,6 +20,23 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>This allows you to record videos</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To record audio, allow us to access your microphone</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This lets you save and download photos from Tiktok to your phone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This lets you pick photos and videos to share on TikTok</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>sounds  good.ttf</string>
+		<string>Horizon Type - AcherusGrotesque-Regular.otf</string>
+		<string>handwriting.otf</string>
+		<string>typeWritterFont.ttf</string>
+		<string>SERIBL__.ttf</string>
+		<string>NEON GLOW-Hollow.otf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

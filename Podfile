@@ -17,4 +17,6 @@ target 'TikTok' do
   pod 'SwiftVideoGenerator'
   pod 'EasyTipView', '~> 2.1'
   pod 'PryntTrimmerView'
+  pod 'lottie-ios'
+  pod 'PanModal'
 end

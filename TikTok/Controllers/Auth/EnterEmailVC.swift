@@ -7,7 +7,7 @@
 //
 
 import UIKit
-class EnterEmailVC: UIViewController {
+class EnterEmailVC: UIViewController, UITextFieldDelegate {
     
     //MARK: Init
     
@@ -65,7 +65,7 @@ class EnterEmailVC: UIViewController {
     }()
     
     
-    fileprivate let emailTextField: UITextField = {
+    fileprivate lazy var emailTextField: UITextField = {
         let tf = UITextField()
         tf.tintColor = tikTokRed
         tf.attributedPlaceholder = NSAttributedString(string: "Email Address", attributes: [
@@ -74,6 +74,7 @@ class EnterEmailVC: UIViewController {
         ])
         tf.addTarget(self, action: #selector(handleValidateNextButton), for: .editingChanged)
         tf.keyboardType = .emailAddress
+        tf.delegate = self 
         return tf
     }()
     
@@ -181,6 +182,17 @@ class EnterEmailVC: UIViewController {
             nextButton.backgroundColor = tikTokRed
             nextButton.setTitleColor(.white, for: .normal)
         }
+    }
+    
+    //Resign First Responders
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    //MARK: - UITextFieldDelegates
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+       textField.resignFirstResponder()
+       return true
     }
     
 }

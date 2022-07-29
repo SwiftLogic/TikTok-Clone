@@ -14,7 +14,7 @@
 //
 
 import UIKit
-protocol ProfileFilterViewDelegate: class {
+protocol ProfileFilterViewDelegate: AnyObject {
     func filterView(_ view: ProfileFilterView, didSelect indexPath: IndexPath)
 }
 class ProfileFilterView: UIView {

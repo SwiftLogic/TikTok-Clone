@@ -26,14 +26,23 @@ class ProfileCell: UICollectionViewCell {
     
     
     //MARK: - Properties
+    var post: Post? {
+        didSet {
+            guard let post = post, let postImageUrl = URL(string: post.postImageUrl) else {return}
+            
+            imageView.kf.setImage(with: postImageUrl)
+        }
+    }
     
     
     
-    fileprivate let imageView: UIImageView = {
+    
+     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "sam")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.alpha = 0.9
         return imageView
     }()
     
@@ -67,14 +76,14 @@ class ProfileCell: UICollectionViewCell {
         imageView.fillSuperview()
         
         
-        imageView.addSubview(playIcon)
+        insertSubview(playIcon, aboveSubview: imageView)
         playIcon.constrainToLeft(paddingLeft: 10)
-        playIcon.constrainToBottom(paddingBottom: -5)
+        playIcon.constrainToBottom(paddingBottom: -10)
         playIcon.constrainWidth(constant: 15)
         playIcon.constrainHeight(constant: 15)
         
-        imageView.addSubview(viewsCountLabel)
-        viewsCountLabel.constrainToBottom(paddingBottom: -3)
+        insertSubview(viewsCountLabel, aboveSubview: imageView)
+        viewsCountLabel.constrainToBottom(paddingBottom: -8)
         viewsCountLabel.leadingAnchor.constraint(equalTo: playIcon.trailingAnchor, constant: 3).isActive = true
         
     }

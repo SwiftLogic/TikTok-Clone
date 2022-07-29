@@ -8,6 +8,9 @@
 
 import UIKit
 public let baseWhiteColor = UIColor.rgb(red: 234, green: 236, blue: 238)
+public let lineSeperatorColor = UIColor.rgb(red: 227, green: 227, blue: 227)
+
+
 class OverlayController: UIViewController {
     
     //MARK: Init

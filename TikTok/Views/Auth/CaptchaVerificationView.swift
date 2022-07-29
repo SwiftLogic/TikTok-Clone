@@ -13,7 +13,6 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
-        backgroundColor = UIColor.cyan.withAlphaComponent(0.5)
         clipsToBounds = true
         layer.cornerRadius = 5
     }
@@ -26,14 +25,17 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     
     
     //MARK: - Properties
-    private var startLocation: CGPoint = .zero
-    private var startFrame: CGRect = .zero
-    private var originalWidth: CGFloat = 55
+    private var arrowWidth: CGFloat = 50//55
+    private let arrowHeight: CGFloat = 40//48
+
+    private var tailWindViewRightWidthAnchor = NSLayoutConstraint()
+    private var tailWindWidthAnchor = NSLayoutConstraint()
+
 
     fileprivate let verificationLabel: UILabel = {
         let label = UILabel()
-        label.text = "Verification"
-        label.font = avenirRomanFont(size: 16.5)
+        label.text = "Verification:"
+        label.font = avenirRomanFont(size: 14.5)
         return label
     }()
     
@@ -41,7 +43,10 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     
     fileprivate let cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(cancelIcon?.withRenderingMode(.alwaysTemplate), for: .normal)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 14.5, weight: .medium, scale: .medium)
+        let normalImage = UIImage(systemName: "xmark", withConfiguration: symbolConfig)!
+        button.setImage(normalImage.withRenderingMode(.alwaysTemplate), for: .normal)
+//        button.setImage(cancelIcon?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .gray
         return button
     }()
@@ -67,15 +72,16 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     
     
     
-     fileprivate let draggableArrowView: UIButton = {
+     fileprivate let arrowboxButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(swipeRightArrow_ic?.withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .gray
         button.backgroundColor = .white
-        button.imageView?.constrainHeight(constant: 25)
-        button.imageView?.constrainWidth(constant: 25)
+        button.imageView?.constrainHeight(constant: 20) //25
+        button.imageView?.constrainWidth(constant: 20) //25
         button.clipsToBounds = true
         button.layer.cornerRadius = 4
+        button.isUserInteractionEnabled = false
         return button
        }()
     
@@ -83,18 +89,25 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     
     fileprivate let refreshButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(swipeRightArrow_ic?.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .gray
-        button.backgroundColor = .white
-//        button.imageView?.centerInSuperview(size: .init(width: 40, height: 40))
-           return button
+        button.setTitle(" Refresh", for: .normal)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 14.5, weight: .medium, scale: .medium)
+        let normalImage = UIImage(systemName: "arrow.clockwise", withConfiguration: symbolConfig)!
+        button.setImage(normalImage.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.black.withAlphaComponent(0.5)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14.5)
+        return button
        }()
     
     
     
     fileprivate let reportAProblemButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Report a problem", for: .normal)
+        button.setTitle(" Report a problem", for: .normal)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 14.5, weight: .medium, scale: .medium)
+        let normalImage = UIImage(systemName: "exclamationmark.circle", withConfiguration: symbolConfig)!
+        button.setImage(normalImage.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = UIColor.black.withAlphaComponent(0.5)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14.5)
            return button
        }()
        
@@ -116,30 +129,36 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     }()
     
     
-    private var tailWindViewTrailingAnchor: NSLayoutConstraint?
     private var draggableViewLeadingAnchor: NSLayoutConstraint?
 
-    fileprivate let tailWindView: UIView = {
+    fileprivate let tailWindBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .green
         view.isUserInteractionEnabled = true
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 4
         return view
     }()
     
     
     
-    fileprivate let dragToSolvePuzzleView: UIView = {
-       let view = UIView()
-       view.backgroundColor = .yellow
+    fileprivate lazy var dragToSolvePuzzleView: UIImageView = {
+        let view = UIImageView(image: puzzleZero!.withRenderingMode(.alwaysTemplate))
+        view.backgroundColor = UIColor.green.withAlphaComponent(0.5)
        view.isUserInteractionEnabled = true
+       let pangesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+       view.addGestureRecognizer(pangesture)
+       view.clipsToBounds = true
+       view.layer.cornerRadius = 4
+        view.tintColor = .red
        return view
    }()
     
     
     fileprivate let finalPuzzleViewToDragTo: UIView = {
-       let view = UIView()
-       view.backgroundColor = .red
-       view.isUserInteractionEnabled = true
+        let view = UIImageView(image: puzzleZeroFill!)
+        view.backgroundColor = UIColor.green
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 4
        return view
    }()
        
@@ -157,13 +176,17 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
         
         addSubview(bottomView)
         
-        addSubview(draggableArrowView)
+        addSubview(tailWindBackgroundView)
         addSubview(dragToSlideLabel)
-        insertSubview(tailWindView, belowSubview: draggableArrowView)
+        addSubview(arrowboxButton)
+
         
         
         addSubview(dragToSolvePuzzleView)
-        imageView.addSubview(finalPuzzleViewToDragTo)
+        addSubview(finalPuzzleViewToDragTo)
+        addSubview(refreshButton)
+        addSubview(reportAProblemButton)
+        
         
         verificationLabel.constrainToTop(paddingTop: 8)
         verificationLabel.constrainToLeft(paddingLeft: 10)
@@ -174,36 +197,47 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
         
         imageView.anchor(top: verificationLabel.bottomAnchor, leading: verificationLabel.leadingAnchor, bottom: bottomView.topAnchor, trailing: cancelButton.trailingAnchor, padding: .init(top: 5, left: 0, bottom: 5, right: 0))
         
-        bottomView.anchor(top: nil, leading: imageView.leadingAnchor, bottom: bottomAnchor, trailing: imageView.trailingAnchor, size: .init(width: 0, height: 48))
-        
-        
-        draggableArrowView.anchor(top: bottomView.topAnchor, leading: nil, bottom: bottomView.bottomAnchor, trailing: nil, padding: .init(top: 1.5, left: 1.5, bottom: 1.5, right: 0), size: .init(width: 55, height: 0))
-        
-        draggableViewLeadingAnchor = draggableArrowView.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 1.5)
-        draggableViewLeadingAnchor?.isActive = true
+        bottomView.anchor(top: nil, leading: imageView.leadingAnchor, bottom: bottomAnchor, trailing: imageView.trailingAnchor, padding: .init(top: 0, left: 0, bottom: 40, right: 0), size: .init(width: 0, height: arrowHeight))
         
         
         dragToSlideLabel.anchor(top: nil, leading: bottomView.leadingAnchor, bottom: nil, trailing: bottomView.trailingAnchor, padding: .init(top: 0, left: 65, bottom: 0, right: 0))
         dragToSlideLabel.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).isActive = true
         
         
-       tailWindView.anchor(top: bottomView.topAnchor, leading: imageView.leadingAnchor, bottom: bottomView.bottomAnchor, trailing: nil, padding: .init(top: 1.5, left: 1.5, bottom: 1.5, right: 0))
+       tailWindBackgroundView.anchor(top: bottomView.topAnchor, leading: imageView.leadingAnchor, bottom: bottomView.bottomAnchor, trailing: nil, padding: .init(top: 1.5, left: 1.5, bottom: 1.5, right: 0))
+        
+        
 
-        tailWindViewTrailingAnchor = tailWindView.trailingAnchor.constraint(equalTo: draggableArrowView.trailingAnchor)
-        tailWindViewTrailingAnchor?.isActive = true
+        tailWindViewRightWidthAnchor = tailWindBackgroundView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: 0)
+        tailWindViewRightWidthAnchor.isActive = false
+        
+        tailWindWidthAnchor = tailWindBackgroundView.widthAnchor.constraint(equalToConstant: arrowWidth)
+        tailWindWidthAnchor.isActive = true
+        
+        
+        arrowboxButton.anchor(top: bottomView.topAnchor, leading: nil, bottom: bottomView.bottomAnchor, trailing: nil, padding: .init(top: 1.5, left: 1.5, bottom: 1.5, right: 0), size: .init(width: arrowWidth + 2, height: 0))
+        
+        arrowboxButton.trailingAnchor.constraint(equalTo: tailWindBackgroundView.trailingAnchor, constant: 0).isActive = true
         
         
         
         dragToSolvePuzzleView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
-        dragToSolvePuzzleView.leadingAnchor.constraint(equalTo: draggableArrowView.leadingAnchor, constant: 0).isActive = true
+        dragToSolvePuzzleView.leadingAnchor.constraint(equalTo: arrowboxButton.leadingAnchor, constant: 0).isActive = true
         dragToSolvePuzzleView.constrainHeight(constant: 65)
         dragToSolvePuzzleView.constrainWidth(constant: 65)
         
+        let randomRightPadding = CGFloat.random(in: 5...120)
+        finalPuzzleViewToDragTo.centerYAnchor.constraint(equalTo: imageView.centerYAnchor).isActive = true
+        finalPuzzleViewToDragTo.constrainToRight(paddingRight: -randomRightPadding)
+        finalPuzzleViewToDragTo.constrainHeight(constant: 65)
+        finalPuzzleViewToDragTo.constrainWidth(constant: 65)
         
-        finalPuzzleViewToDragTo.centerInSuperview(size: .init(width: 65, height: 65))
         
+        refreshButton.anchor(top: bottomView.bottomAnchor, leading: bottomView.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 10, left: 0, bottom: 0, right: 0))
+        reportAProblemButton.anchor(top: bottomView.bottomAnchor, leading: refreshButton.trailingAnchor, bottom: nil, trailing: nil, padding: .init(top: 10, left: 12, bottom: 0, right: 0))
+
         
-        [panGesture].forEach {(gesture) in draggableArrowView.addGestureRecognizer(gesture)}
+        [panGesture].forEach {(gesture) in tailWindBackgroundView.addGestureRecognizer(gesture)}
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             // your code here
@@ -217,39 +251,49 @@ class CaptchaVerificationView: UIView, UIGestureRecognizerDelegate {
     
     
     //MARK: - Target Selectors
-    
-    private func clampFrame(_ frame: CGRect, inBounds bounds: CGRect) -> CGRect {
-        let center: CGPoint = CGPoint(x: max(bounds.minX + frame.width*0.5, min(frame.midX, bounds.maxX - frame.width*0.5)),
-                                      y: max(bounds.minY + frame.height*0.5, min(frame.midY, bounds.maxY - frame.height*0.5)))
-        return CGRect(x: center.x-frame.width*0.5, y: center.y-frame.height*0.5, width: frame.width, height: frame.height)
-    }
-    
-    
-    
-
-   private func moveFrame(_ frame: CGRect, by translation: CGPoint, constrainedTo bounds: CGRect) -> CGRect {
-        var newFrame = frame
-        newFrame.origin.x += translation.x
-        newFrame.origin.y += translation.y
-        return clampFrame(newFrame, inBounds: bounds)
-    }
-
-   
-    //Note: - Solution derived from https://stackoverflow.com/questions/55488511/how-to-set-boundaries-of-dragging-control-using-uipangesturerecognizer
     @objc private func handlePan(_ gestureRecognizer: UIPanGestureRecognizer) {
-        guard let gestureView = gestureRecognizer.view else { return }
+        
+        
+        var newWidth = -(bottomView.frame.width - gestureRecognizer.location(in: bottomView).x)
+        newWidth = max(-(bottomView.frame.width - arrowHeight), newWidth)
+        newWidth = min(0, newWidth)
+        tailWindViewRightWidthAnchor.constant = newWidth
+        
+        
 
         if gestureRecognizer.state == .began {
-            startLocation = gestureRecognizer.location(in: bottomView)
-            startFrame = gestureView.frame
+            tailWindBackgroundView.backgroundColor = UIColor.cyan.withAlphaComponent(0.5)
+            tailWindWidthAnchor.isActive = false
+            tailWindViewRightWidthAnchor.isActive = true
+            dragToSlideLabel.alpha = 0
             
-        } else if gestureRecognizer.state == .changed {
-            let newLocation = gestureRecognizer.location(in: bottomView)
-            let translation = CGPoint(x: newLocation.x-startLocation.x, y: 0) //this only allows horizontal translation
-            gestureView.frame = moveFrame(startFrame, by: translation, constrainedTo: bottomView.frame)
+        } else if gestureRecognizer.state == .ended {
+            
+            let puzzleSolved = dragToSolvePuzzleView.frame.contains(finalPuzzleViewToDragTo.frame)
+            if puzzleSolved {
+                triggerHapticFeedback()
+                tailWindBackgroundView.backgroundColor = UIColor.cyan.withAlphaComponent(0.5)
+                
+//                print("puzzle solved!")
+            } else {
+                tailWindBackgroundView.backgroundColor = UIColor.red.withAlphaComponent(0.5)
+                tailWindWidthAnchor.isActive = true
+                tailWindViewRightWidthAnchor.isActive = false
+                dragToSlideLabel.alpha = 1
 
-//            tailWindViewTrailingAnchor?.constant = originalWidth + translation.x
+                UIView.animate(withDuration: 0.5) {[weak self] in
+                    self?.layoutIfNeeded()
+                }
+//                print("puzzle failed!")
+            }
+            
         }
+
+        
+        
+        
+        
+        
     }
     
 

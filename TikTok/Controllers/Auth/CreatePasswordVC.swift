@@ -9,7 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
-class CreatePasswordVC: UIViewController {
+class CreatePasswordVC: UIViewController, UITextFieldDelegate {
     
     //MARK: Init
     init(birthdate: Date, emailAddress: String) {
@@ -48,7 +48,7 @@ class CreatePasswordVC: UIViewController {
     }()
     
     
-    fileprivate let passwordTextField: UITextField = {
+    fileprivate lazy var passwordTextField: UITextField = {
         let tf = UITextField()
         tf.tintColor = tikTokRed
         tf.attributedPlaceholder = NSAttributedString(string: "Enter Password", attributes: [
@@ -57,6 +57,7 @@ class CreatePasswordVC: UIViewController {
         ])
         tf.addTarget(self, action: #selector(handleValidateNextButton), for: .editingChanged)
         tf.isSecureTextEntry = true
+        tf.delegate = self
         return tf
     }()
     
@@ -188,10 +189,13 @@ class CreatePasswordVC: UIViewController {
         nextButton.anchor(top: secondIcon.bottomAnchor, leading: lineSeperatorView.leadingAnchor, bottom: nil, trailing: lineSeperatorView.trailingAnchor, padding: .init(top: 35, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 45))
                
         
-        
-//        view.addSubview(captchaVerificationView)
-//        let spacing: CGFloat = view.frame.width * 0.12
-//        captchaVerificationView.centerInSuperview(size: .init(width: view.frame.width - spacing, height: view.frame.width - spacing))
+        let blackview = UIView()
+        blackview.backgroundColor = UIColor.black.withAlphaComponent(0.8)
+        view.addSubview(blackview)
+        blackview.fillSuperview()
+        view.addSubview(captchaVerificationView)
+        let spacing: CGFloat = view.frame.width * 0.12
+        captchaVerificationView.centerInSuperview(size: .init(width: view.frame.width - spacing, height: view.frame.width - spacing))
 //
     }
     
@@ -268,4 +272,15 @@ class CreatePasswordVC: UIViewController {
      
     }
     
+    
+    //Resign First Responders
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    //MARK: - UITextFieldDelegates
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+       textField.resignFirstResponder()
+       return true
+    }
 }

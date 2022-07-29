@@ -62,24 +62,37 @@ let alightLeft_ic = UIImage(named: "align-left")
 let alightCenter_ic = UIImage(named: "align-center")
 
 let play_ic_filled = UIImage(named: "play")
+let addfriends_ic = UIImage(named: "findPeopleToAdd_ic")//"addfriends_ic")
+
+let threedotmenu_ic = UIImage(named: "threedotmenu_ic")
 
 
+let puzzleZero = UIImage(named: "puzzle0")
+
+let puzzleZeroFill = UIImage(named: "puzzle0.fill")
+
+let cameraIcon = UIImage(named: "camera")
+let copyIcon = UIImage(named: "copy")
+
+let hashtagIcon = UIImage(named: "hashtag")
 
 
-
-
-  var CURRENT_USER: User?
-
- func handleFetchCurrentUser() {
-    guard let currentUid = Auth.auth().currentUser?.uid else {return}
-    Database.database().reference().child("users").child(currentUid).observeSingleEvent(of: .value, with: { (snapshot) in
-        guard let dict = snapshot.value as? [String : Any] else {return}
-        let user = User(uid: snapshot.key, dictionary: dict)
-        CURRENT_USER = user
-    }) { (error) in
-        print("failed to fetch current user:", error.localizedDescription)
-    }
+var CURRENT_UID: String? {
+    return Auth.auth().currentUser?.uid
 }
+
+let DEFAULT_PROFILE_IMAGE_URL_STRING = "https://firebasestorage.googleapis.com/v0/b/tiktok-85acc.appspot.com/o/profile_images%2Fdefault_pp.png?alt=media&token=c3a25b4e-902b-43f0-9341-e7d4bd095150"
+
+//func handleFetchCurrentUser() {
+//    guard let currentUid = Auth.auth().currentUser?.uid else {return}
+//    Database.database().reference().child("users").child(currentUid).observeSingleEvent(of: .value, with: { (snapshot) in
+//        guard let dict = snapshot.value as? [String : Any] else {return}
+//        let user = User(uid: snapshot.key, dictionary: dict)
+//        CURRENT_USER = user
+//    }) { (error) in
+//        print("failed to fetch current user:", error.localizedDescription)
+//    }
+//}
 
 
 
@@ -102,7 +115,7 @@ public func didTakePicture(_ picture: UIImage, to orientation: UIImage.Orientati
 
 
 public func getAssetThumbnail(asset: PHAsset, size: CGSize) -> UIImage? {
-     let thumbnailImage = PHLibraryAPI.shared.getAssetThumbnail(asset: asset, size: size)
+    let thumbnailImage = PHLibraryAPI.shared.getAssetThumbnail(asset: asset, size: size)
     return thumbnailImage
 }
 
@@ -110,9 +123,9 @@ public func getAssetThumbnail(asset: PHAsset, size: CGSize) -> UIImage? {
 
 let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
 /// Triggered an haptic feedback
- public func triggerHapticFeedback() {
-     selectionFeedbackGenerator.selectionChanged()
- }
+public func triggerHapticFeedback() {
+    selectionFeedbackGenerator.selectionChanged()
+}
 
 
 
@@ -120,4 +133,30 @@ let notificationFeedbackGenerator = UINotificationFeedbackGenerator()
 
 public func triggerHapticSuccessFeedback() {
     notificationFeedbackGenerator.notificationOccurred(.success)
+}
+
+
+
+
+let LISTEN_FOR_VIDEO_PROCESSING_PROGRESS = "LISTEN_FOR_VIDEO_PROCESSING_PROGRESS"
+
+public func handleSanitize(input: String) -> String {
+    var inputToSanitize = input
+    inputToSanitize = inputToSanitize.replacingOccurrences(of: " ", with: "_")
+    let textWithOutCharsOrSymbols = removeSpecialCharsFromString(inputToSanitize)
+    return textWithOutCharsOrSymbols
+}
+
+
+
+class MyNavigationController: UINavigationController, UINavigationControllerDelegate {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.delegate = self
+    }
+
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        let item = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
+        viewController.navigationItem.backBarButtonItem = item
+    }
 }

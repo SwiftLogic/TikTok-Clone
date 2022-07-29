@@ -19,6 +19,8 @@ struct Fonts {
     static let handWriting = "Kaibon"
     static let neon = "NEONGLOWHollow"
     static let serif = "SerifBlack"
+    static let acherusGrotesque = "AcherusGrotesque-Regular"
+    static let soundsGood = "SoundsGood"
     //MARK: - Code Was Created by SamiSays11. Copyright © 2019 SamiSays11 All rights reserved.    
 }
 
@@ -27,7 +29,7 @@ struct Fonts {
 public func handleFindFontName() {
     for family in UIFont.familyNames.sorted() {
         let names = UIFont.fontNames(forFamilyName: family)
-        print("Family: \(family) Font Names: \(names)")
+        print("DEBUG Font Family: \(family) Font Names: \(names)")
     }
 }
 

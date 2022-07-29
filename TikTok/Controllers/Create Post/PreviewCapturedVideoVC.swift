@@ -15,9 +15,12 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: Init
     deinit {
-        SVProgressHUD.show(withStatus: "PreviewCapturedVideoVC was deinited")
-        SVProgressHUD.dismiss(withDelay: 2)
+        print("PreviewCapturedVideoVC was deinited")
+        (viewWillDenitRestartVideoSession)?()
+
     }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
@@ -30,8 +33,18 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
         let backButton = UIBarButtonItem(title: "", style: .plain, target: navigationController, action: nil)
         navigationItem.backBarButtonItem = backButton
 //        handleMergeClips(clips: recordedClips)
+        
+        
+        recordedClips.forEach { (clip) in
+            urlsForVids.append(clip.videoUrl)
+        }
     }
-    
+    var urlsForVids: [URL] = [] {
+        didSet {
+            print("outputURLunwrapped:", urlsForVids)
+        }
+    }
+
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -58,6 +71,7 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
     
     
     //MARK: - Properties
+    var viewWillDenitRestartVideoSession: (() -> Void)?
     fileprivate lazy var defaultStickerWidthHeight = CGFloat(view.frame.width)
     fileprivate let recordedClips: [VideoClips]
     fileprivate var activeSticker: Sticker?
@@ -95,6 +109,14 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
     let mainCanvasView: UIView = {
         let view = UIView()
         return view
+    }()
+    
+    
+    let processingVideoProgressView: UIProgressView = {
+        let progressView = UIProgressView()
+        progressView.trackTintColor = .lightGray
+        progressView.progressTintColor = .red
+        return progressView
     }()
 
       lazy var setDurationButton: UIButton = {
@@ -628,6 +650,9 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
         
         view.addSubview(setDurationContainerView)
         setDurationContainerView.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor, size: .init(width: 0, height: setDurationContainerViewHeight))
+        
+        view.addSubview(processingVideoProgressView)
+        processingVideoProgressView.anchor(top: nextButton.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: -10, left: 0, bottom: 0, right: 0), size: .init(width: 0, height: 3))
               
         
         [panGesture, pinchGesture, tapGesture].forEach {(gesture) in view.addGestureRecognizer(gesture)}
@@ -671,6 +696,8 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc fileprivate func handleDidTapNext() {
+        handleMergeClips()
+        return
         hideStatusBar = false
         let sharePostVC = SharePostVC(videoUrl: currentlyPlayingVideoClip.videoUrl)
         sharePostVC.thumbnailImageView.image = thumbbnailImageView.image
@@ -708,7 +735,7 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
         self.player = player
         self.playerLayer = playerLayer
         playerLayer.frame = thumbbnailImageView.frame
-        playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+//        playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         self.player = player
         self.playerLayer = playerLayer
         thumbbnailImageView.layer.insertSublayer(playerLayer, at: 3)
@@ -780,18 +807,38 @@ class PreviewCapturedVideoVC: UIViewController, UIGestureRecognizerDelegate {
     
     
     //MARK: - Merge recorded clips into one using AVFoundation //goal!
-    @objc fileprivate func handleMergeClips(clips:[URL]){
-        VideoGenerator.mergeMovies(videoURLs: clips) { (result) in
-            switch result {
-            case .success(let videoUrl):
-                print("videoURL:", videoUrl)
-//                self.currentlyPlayingVideoClip = videoUrl
-//                self.perform(#selector(self.setUpPlayerView), with: 0, afterDelay: 0.5)
+    @objc fileprivate func handleMergeClips(){
+        NotificationCenter.default.addObserver(self, selector: #selector(listenForVideoProcessingProgress), name: NSNotification.Name(rawValue:LISTEN_FOR_VIDEO_PROCESSING_PROGRESS), object: nil)
 
-            case .failure(let error):
-                print(error.localizedDescription)
+        VideoCompositionWriter().mergeMultipleVideo(urls: urlsForVids) { (success, outputURL) in
+            if success {
+                guard let outputURLunwrapped = outputURL else {return}
+                print("outputURLunwrapped:", outputURLunwrapped)
+                    DispatchQueue.main.async {
+                        let player = AVPlayer(url: outputURLunwrapped)
+                        let vc = AVPlayerViewController()
+                        vc.player = player
+
+                        self.present(vc, animated: true) {
+                            vc.player?.play()
+                        }
+                    }
             }
         }
+    }
+    
+    
+    
+    @objc func listenForVideoProcessingProgress(notification: NSNotification) {
+        if let progress = notification.userInfo?["progress"] as? Float {
+            processingVideoProgressView.setProgress(progress, animated: true)
+            let percentCompleted = String(format: "%.0f%%", progress * 100)
+//            progressCompleted = percentCompleted
+
+            print("notifications firing: ", percentCompleted)
+
+        }
+        
     }
 }
 

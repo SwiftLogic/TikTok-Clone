@@ -12,6 +12,8 @@ fileprivate let headerReuseIdentifier = "headerReuseIdentifier"
 fileprivate let footerReuseIdentifier = "footerReuseIdentifier"
 protocol TikTokDetailsVCDelegate: class {
     func commentInputAccessoryViewDidResignFirstResponder(text: String)
+    func didTapZoomBack(scrollToIndexPath: IndexPath, isZoomingBackFromDetailsVC: Bool)
+
 }
 class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
@@ -27,6 +29,40 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
     
     
     //MARK: - LifeCycle
+     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+            isOpeningForFirstTime = false
+            collectionView.alpha = 1
+            //so when we can use zoomview animation to exit this controller
+            navigationController?.delegate = zoomNavigationDelegate
+                    
+            
+        }
+        
+        
+       
+        
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            handleRefreshNavigationBar()
+            collectionView.backgroundColor = .clear //.black if you remove lotte view change the color back to black
+        }
+        
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            hideStatusBar = false
+            navigationController?.isNavigationBarHidden = false//isAboutToPresentAnotherController == false ? false : true
+            collectionView.backgroundColor = .clear // so we can see the controller we are zooming into it. DONT REMOVE
+        }
+    
+    
+    fileprivate func handleRefreshNavigationBar() {
+           // Force the navigation bar to update its size. hide and unhiding it fforces a redraw and fixes a bug
+           guard let navController = navigationController else {return}
+           navController.setNeedsStatusBarAppearanceUpdate()
+           navController.isNavigationBarHidden = false
+           navController.isNavigationBarHidden = true
+       }
     
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
@@ -39,6 +75,31 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
     
     //MARK: - Properties
     weak var delegate : TikTokDetailsVCDelegate?
+    var postData: [Post] = [Post]()
+    
+    fileprivate let zoomNavigationDelegate = ZoomTransitionDelegate()
+    var currentIndexPath = IndexPath()
+    var isOpeningForFirstTime = true
+    
+    
+    private var hideStatusBar: Bool = true {
+        didSet {
+            
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                self?.setNeedsStatusBarAppearanceUpdate()
+            }
+            
+        }
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return hideStatusBar
+    }
+
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.fade
+    }
+    
     
 //    override var prefersStatusBarHidden: Bool {
 //      return true
@@ -56,6 +117,14 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
          return true
      }
     
+    
+    lazy var zoomingImageView: UIImageView = {
+         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+       
     
     fileprivate lazy var commentInputAccessoryView: CommentInputAccessoryView = {
        let height = tabBarController?.tabBar.frame.height ?? 49.0
@@ -83,8 +152,16 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
         collectionView.alwaysBounceVertical = true
         collectionView.showsVerticalScrollIndicator = false
         collectionView.keyboardDismissMode = .onDrag
+        collectionView.alpha = 0
+        view.insertSubview(zoomingImageView, belowSubview: collectionView)
+        zoomingImageView.frame = view.bounds
+        
+
     }
     
+    @objc func centerCollectionView() {
+         collectionView.scrollToItem(at: currentIndexPath, at: .centeredVertically, animated: true)
+       }
     
     
     @objc func handleDismissKeyBoard() {
@@ -99,9 +176,14 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath) as! VerticalFeedCell
         cell.delegate = self
         cell.handleShowOptionalSubViewsInCell()
+        cell.post = postData[indexPath.item]
         return cell
     }
     
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        isOpeningForFirstTime == true ? collectionView.scrollToItem(at: currentIndexPath, at: .centeredVertically, animated: false) : nil
+       }
     
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -110,7 +192,7 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 12
+        return postData.count
     }
     
     
@@ -125,13 +207,31 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
     
    
     
+//    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+//        let index = targetContentOffset.pointee.y / view.frame.height
+//        let indexPath = IndexPath(item: Int(index), section: 0)
+//        currentIndexPath = indexPath
+////               print("scrollViewWillEndDragging: ", indexPath)
+//
+//    }
+    
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         commentInputAccessoryView.commentTextView.text = nil
         commentInputAccessoryView.commentTextView.placeholderLabel.text = "Add comment..."
+//        if decelerate == false {
+//            centerCollectionView()
+//            triggerHapticFeedback()
+//
+//        }
     }
   
 
-    
+//       override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+//           centerCollectionView()
+//           triggerHapticFeedback()
+//
+//       }
+//    
     //MARK: - Code Was Created by SamiSays11. Copyright © 2019 SamiSays11 All rights reserved.
 }
 
@@ -145,9 +245,16 @@ class TikTokDetailsVC: UICollectionViewController, UICollectionViewDelegateFlowL
     }
     
     
-    func handleDidTapExitController() {
+    func handleDidTapExitController(cell: VerticalFeedCell) {
+        cell.isHidden = true
+        cell.prepareForReuse()
+//        removePeriodicTimeObserver()
+        guard let indexPath = collectionView.indexPath(for: cell) else {return}
+        delegate?.didTapZoomBack(scrollToIndexPath: indexPath, isZoomingBackFromDetailsVC: true)
         navigationController?.popViewController(animated: true)
+        
     }
+    
     
     
     func didTapCommentTextViewInCell(currentCell: VerticalFeedCell) {
@@ -187,4 +294,21 @@ extension TikTokDetailsVC: UITextViewDelegate {
     
     
 
+}
+
+//MARK: - ZoomViewController
+extension TikTokDetailsVC: ZoomViewController, UINavigationControllerDelegate {
+    
+    //MARK: - ZoomViewController Delegates
+       func zoomingBackgroundView(for transition: ZoomTransitionDelegate) -> UIView? {
+           return nil
+       }
+       
+       
+       
+       func zoomingImageView(for transition: ZoomTransitionDelegate) -> UIImageView? {
+           return zoomingImageView
+       }
+       
+    
 }

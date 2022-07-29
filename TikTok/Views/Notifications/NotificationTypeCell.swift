@@ -59,7 +59,7 @@ class NotificationTypeCell: UITableViewCell {
     fileprivate let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray
-        label.font = defaultFont(size: 14.5)
+        label.font = navBarFont(size: 14.5)//defaultFont(size: 14.5)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

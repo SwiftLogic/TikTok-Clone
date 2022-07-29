@@ -16,7 +16,7 @@
 import UIKit
 protocol VerticalFeedCellDelegate: AnyObject {
     func didTapPlayButton(play: Bool)
-    func handleDidTapExitController()
+    func handleDidTapExitController(cell: VerticalFeedCell)
     func didTapCommentTextViewInCell(currentCell: VerticalFeedCell)
 }
 
@@ -64,7 +64,7 @@ class VerticalFeedCell: UICollectionViewCell {
             shareCountLabel.text = postUnwrapped.views.formatUsingAbbrevation()
             
             
-           let artistImageUrlString = "https://media.resources.festicket.com/www/artists/BurnaBoy.png"
+            let artistImageUrlString = "https://i.ytimg.com/vi/qHeqUnvWbhc/maxresdefault.jpg"//post?.postImageUrl ?? ""
             guard let artistImageUrl = URL(string: artistImageUrlString) else {return}
             artistImageView.kf.setImage(with: artistImageUrl)
 
@@ -76,7 +76,7 @@ class VerticalFeedCell: UICollectionViewCell {
     
      let postImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit//scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -293,7 +293,8 @@ class VerticalFeedCell: UICollectionViewCell {
       progressView.isHidden = true
       progressView.progressTintColor = UIColor.white
       progressView.trackTintColor = UIColor.lightGray
-      progressView.transform = progressView.transform.scaledBy(x: 1, y: 0.5)
+      progressView.constrainHeight(constant: 0.75)
+//      progressView.transform = progressView.transform.scaledBy(x: 1, y: 0.5)
       return progressView
    }()
     
@@ -484,7 +485,7 @@ class VerticalFeedCell: UICollectionViewCell {
     
     
     @objc func handleDidTapExitController() {
-        delegate?.handleDidTapExitController()
+        delegate?.handleDidTapExitController(cell: self)
     }
     
     //MARK: - Code Was Created by SamiSays11. Copyright © 2019 SamiSays11 All rights reserved.
@@ -497,6 +498,9 @@ class VerticalFeedCell: UICollectionViewCell {
 
 //MARK: - TikTokDetailsVCDelegate
 extension VerticalFeedCell: TikTokDetailsVCDelegate {
+    
+    func didTapZoomBack(scrollToIndexPath: IndexPath, isZoomingBackFromDetailsVC: Bool) {}
+    
     func commentInputAccessoryViewDidResignFirstResponder(text: String) {
         if text.isEmpty == false {
         commentInputAccessoryView.commentTextView.placeholderLabel.text = nil

@@ -19,6 +19,12 @@ class CreatePostVC: UIViewController {
     
     //
     //MARK: - Init
+    deinit {
+        print("CreatePostVC deinit")
+    }
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
@@ -30,18 +36,14 @@ class CreatePostVC: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
        super.viewDidDisappear(animated)
-       //MARK: - Remove before uploading to firebase
        stopSession()
    }
     
+    //MAKR:- CONTINUE HERE
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
-        if setUpSession() {
-            perform(#selector(startSession), with: nil, afterDelay: 0.1)
-            print("strokeEnd: ", segmentedProgressView.shapeLayer.strokeEnd)
-
-        }
+        handleChangeMediaView(alpha: 1)
     }
     
     
@@ -50,8 +52,7 @@ class CreatePostVC: UIViewController {
          return true
      }
     
-    
-    
+    fileprivate var isMediaPickerOpen = false
     fileprivate var thumbnailImage: UIImage?
     fileprivate var maxVidDurationExhasuted = false
     fileprivate var currentMaxRecordingDuration: Int = 15 {
@@ -88,11 +89,21 @@ class CreatePostVC: UIViewController {
 
     fileprivate let buttonsDimension: CGFloat = 26//28
     fileprivate let buttonsRightPadding: CGFloat = 17
+    
+    fileprivate let mediaPickerView: MediaPickerView = {
+        let view = MediaPickerView()
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 12
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] //layerMinXMinYCorner = top left, layerMaxXMinYCorner = top left
+        return view
+    }()
 
     
      let cancelButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(cancelIcon?.withRenderingMode(.alwaysTemplate), for: .normal)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold, scale: .medium)
+        let cancelImage = UIImage(systemName: "xmark", withConfiguration: symbolConfig)!
+        button.setImage(cancelImage.withRenderingMode(.alwaysTemplate), for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
         return button
@@ -197,7 +208,7 @@ class CreatePostVC: UIViewController {
     lazy var openMediaPickerView: UIView = {
         let view = UIView()
 //        view.backgroundColor = .red
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenMediaPicker))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openOrCloseMediaPickerView))
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tapGesture)
        return view
@@ -206,7 +217,7 @@ class CreatePostVC: UIViewController {
    lazy var openMediaPickerButton: UIButton = {
        let button = UIButton(type: .system)
        button.setImage(landscapeIcon?.withRenderingMode(.alwaysOriginal), for: .normal)
-       button.addTarget(self, action: #selector(didTapOpenMediaPicker), for: .allTouchEvents)
+       button.addTarget(self, action: #selector(openOrCloseMediaPickerView), for: .allTouchEvents)
        return button
    }()
     
@@ -226,7 +237,7 @@ class CreatePostVC: UIViewController {
         label.font = defaultFont(size: 12.5)
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOpenMediaPicker))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(openOrCloseMediaPickerView))
         label.isUserInteractionEnabled = true
         label.addGestureRecognizer(tapGesture)
         return label
@@ -319,14 +330,14 @@ class CreatePostVC: UIViewController {
        }()
            
            
-           let beautyLabel: UILabel = {
-               let label = UILabel()
-               label.text = "Beauty"
-               label.font = defaultFont(size: 10.5)
-               label.textColor = .white
-               label.translatesAutoresizingMaskIntoConstraints = false
-               return label
-           }()
+    let beautyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Beauty"
+        label.font = defaultFont(size: 10.5)
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     
     
@@ -586,23 +597,36 @@ class CreatePostVC: UIViewController {
             perform(#selector(startSession), with: nil, afterDelay: 0.3)
         }
         
+        handleSetUpMediaPicker()
+        
     }
     
+   
+    //MARK: - Finish this 
+    fileprivate func handleSetUpMediaPicker() {
+        view.addSubview(mediaPickerView)
+        mediaPickerView.anchor(top: nil, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor, size: .init(width: 0, height: MediaPickerView.MediaPickerHeight))
+        mediaPickerView.transform = CGAffineTransform(translationX: 0, y: MediaPickerView.MediaPickerHeight)
+        mediaPickerView.mediaPickerWasClosedDelegate = self
+       
+    }
     
+    @objc fileprivate func openOrCloseMediaPickerView() {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseIn) {[weak self] in
+            guard let self = self else {return}
+            if self.isMediaPickerOpen == false {
+                self.mediaPickerView.transform = .identity
+                self.stopSession()
+            } else {
+                self.mediaPickerView.transform = .init(translationX: 0, y: MediaPickerView.MediaPickerHeight)
+            }
+        } completion: {[weak self] (onComplete) in
+            guard let self = self else {return}
+            self.isMediaPickerOpen = !self.isMediaPickerOpen
+        }
+    }
     
-    @objc fileprivate func didTapOpenMediaPicker() {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        let mediaPickerVC = MediaPickerVC(collectionViewLayout: layout)
-        mediaPickerVC.mediaPickerWasClosedDelegate = self
-        let navController = UINavigationController(rootViewController: mediaPickerVC)
-        present(navController, animated: true, completion: nil)
-        stopSession()
 
-//        print("didTapOpenMediaPicker")
-    }
-    
-    
     
     @objc fileprivate func handleDidTapDiscardButton() {
         let alertVC = UIAlertController(title: "Discard the last clip?", message: nil, preferredStyle: .alert)
@@ -703,6 +727,12 @@ class CreatePostVC: UIViewController {
     @objc fileprivate func handlePreviewCapturedVideo() {
         if let thumbnailImageUnwrapped = thumbnailImage, let cameraPosition = currentCameraDevice?.position {
             let previewVC = PreviewCapturedVideoVC(recordedClips: recordedClips)
+            previewVC.viewWillDenitRestartVideoSession = {[weak self] in
+                guard let self = self else {return}
+                if self.setUpSession() {
+                    self.perform(#selector(self.startSession), with: nil, afterDelay: 0.1)
+                }
+            }
             navigationController?.pushViewController(previewVC, animated: true)
         }
     }
@@ -1090,10 +1120,59 @@ extension CreatePostVC: AVCaptureFileOutputRecordingDelegate {
 //MARK: - MediaPickerWasClosedDelegate
 extension CreatePostVC: MediaPickerWasClosedDelegate {
     func didTapCloseMediaPicker() {
+        openOrCloseMediaPickerView()
         if setUpSession() {
             perform(#selector(startSession), with: nil, afterDelay: 0.1)
         }
     }
+    
+    
+    
+    
+    func didTapNextButton(selectedAssets: [PHAsset]) {
+        if selectedAssets.count == 1 {
+            prepareToLoadVideoUrlIntoPlayer(selectedAssets.first!) {[weak self] (videoURL, avasset) in
+                let trimVideoVC = TrimVideoVC(videoURL: videoURL, asset: avasset)
+                self?.navigationController?.pushViewController(trimVideoVC, animated: true)
+                self?.handleChangeMediaView(alpha: 0)
+
+            }
+        } else {
+            var selectedVideoMediaList = [SelectedVideoMedia]()
+            for (index, asset) in selectedAssets.enumerated() {
+                prepareToLoadVideoUrlIntoPlayer(asset) {[weak self] (videoURL, avAsset) in
+                    let selectedMedia = SelectedVideoMedia.init(videoUrl: videoURL, avAsset: avAsset)
+                    selectedVideoMediaList.append(selectedMedia)
+                    if index == selectedAssets.count - 1 {
+                        let syncVideoVC = SyncVideosVC(selectedVideoMedia: selectedVideoMediaList)
+                        self?.navigationController?.pushViewController(syncVideoVC, animated: true)
+                        self?.handleChangeMediaView(alpha: 0)
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    fileprivate func handleChangeMediaView(alpha: CGFloat) {
+        view.alpha = alpha
+        mediaPickerView.alpha = alpha
+    }
+    
+    fileprivate func prepareToLoadVideoUrlIntoPlayer(_ asset: PHAsset, onComplete: @escaping (URL, AVAsset) -> ()) {
+        if asset.mediaType == .video {
+            asset.getURL { (url, image, avasset) in
+                DispatchQueue.main.async {
+                    if let urlUnwrapped = url, let avasset = avasset  {
+                        onComplete(urlUnwrapped, avasset)
+                    }
+                }
+            }
+        } else if asset.mediaType == .image {
+            
+        }
+    }
+    
 }
 
 

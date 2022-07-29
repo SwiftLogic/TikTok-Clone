@@ -16,10 +16,13 @@ class MediaPickerMenu: UIView {
     
     //MARK: - Init
 
+    deinit {
+        print("deinit MediaPickerMenu")
+    }
     
     //MARK: - Properties
     var horizontalBarLeftConstraint: NSLayoutConstraint?
-    weak var mediaPickerVC: MediaPickerVC?
+    var scrollToMenu: ((Int) -> Void)?
 
     fileprivate let menuTitles = ["Videos", "Image"]
     fileprivate let cellReuseId = "TikTokcloneID"
@@ -112,7 +115,8 @@ extension MediaPickerMenu: UICollectionViewDelegate, UICollectionViewDataSource,
     
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        mediaPickerVC?.scrollToMenuIndex(menuIndex: indexPath.item)
+//        mediaPickerView?.scrollToMenuIndex(menuIndex: indexPath.item)
+        scrollToMenu?(indexPath.item)
     }
     
 }

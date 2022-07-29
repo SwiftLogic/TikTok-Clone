@@ -15,14 +15,13 @@ class MainTabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        handleSetUpViewControllers()
         tabBar.tintColor = .black
         tabBar.unselectedItemTintColor = .lightGray
         delegate = self
         setTabBarToTransparent()
         checkIfUserIsLoggedIn()
-////
-//          let firebaseAuth = Auth.auth()
+//        handleFindFontName()
+//        let firebaseAuth = Auth.auth()
 //        do {
 //          try firebaseAuth.signOut()
 //        } catch let signOutError as NSError {
@@ -45,7 +44,8 @@ class MainTabBarController: UITabBarController {
        let progressView = UIProgressView()
        progressView.progressTintColor = UIColor.white
        progressView.trackTintColor = UIColor.lightGray
-       progressView.transform = progressView.transform.scaledBy(x: 1, y: 0.5)
+       progressView.constrainHeight(constant: 0.75)
+//       progressView.transform = progressView.transform.scaledBy(x: 1, y: 0.5)
        return progressView
     }()
     
@@ -53,17 +53,27 @@ class MainTabBarController: UITabBarController {
     
     //MARK: - Tabbar Delegates
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        let midtabbar : UITabBarItem = self.tabBar.items![2] as UITabBarItem
+        
            let index = -(tabBar.items?.firstIndex(of: item)?.distance(to: 0))!
            item.tag = index
         if index == 0 {
-           setTabBarToTransparent()
+            setTabBarToTransparent()
             progressView.alpha = 1
             tabBarSeperatorTopLine.backgroundColor = UIColor.clear.cgColor
+            let whiteSongImage = UIImage(named: "music_white")!.withRenderingMode(.alwaysOriginal)
+            midtabbar.image = whiteSongImage
+
         }  else {
             restoreTabBar()
             progressView.alpha = 0
             tabBarSeperatorTopLine.backgroundColor = UIColor.lightGray.cgColor
+            let blackSongImage = UIImage(named: "song")!.withRenderingMode(.alwaysOriginal)
+            midtabbar.image = blackSongImage
         }
+        
+
+        
     }
 
     
@@ -72,14 +82,14 @@ class MainTabBarController: UITabBarController {
     //MARK: - Handlers
 
     func handleSetUpViewControllers() {
-        let selectedFeedImage = UIImage(named: "homeFeedSelected")!.withRenderingMode(.alwaysTemplate)
-        let feedImage = UIImage(named: "homeFeedSelected")!.withRenderingMode(.alwaysTemplate)
+        let selectedFeedImage = handleSetUpTabbarImages(item: "house").last!//UIImage(named: "homeFeedSelected")!.withRenderingMode(.alwaysTemplate)
+        let feedImage = handleSetUpTabbarImages(item: "house").first!//UIImage(named: "homeFeedSelected")!.withRenderingMode(.alwaysTemplate)
         
         
         let homeViewController = handleNavigationControllers(controller: HomeFeedController(), selectedImage: selectedFeedImage, image: feedImage, title: "Home")
         
-        let searchSelectedImage = UIImage(named: "searchSelected")!.withRenderingMode(.alwaysTemplate)
-       let searchImage = UIImage(named: "searchSelected")!.withRenderingMode(.alwaysTemplate)
+        let searchSelectedImage = handleSetUpTabbarImages(item: "safari").last!//UIImage(named: "searchSelected")!.withRenderingMode(.alwaysTemplate)
+       let searchImage = handleSetUpTabbarImages(item: "safari").first!//UIImage(named: "searchSelected")!.withRenderingMode(.alwaysTemplate)
                
         
         
@@ -87,26 +97,28 @@ class MainTabBarController: UITabBarController {
         
         
         let createPostSelectedImage = UIImage(named: "song")!.withRenderingMode(.alwaysTemplate)
-             let createPostImage = UIImage(named: "song")!.withRenderingMode(.alwaysTemplate)
+        let createPostImage = UIImage(named: "music_white")!.withRenderingMode(.alwaysOriginal)
 
         
         let createPostViewController = handleNavigationControllers(controller: UIViewController(), selectedImage: createPostSelectedImage, image: createPostImage, title: nil)
+//        let customTabbarItem = UITabBarItem(title: nil, image: createPostSelectedImage, selectedImage: createPostImage)
+//        createPostViewController.tabBarItem = customTabbarItem
         
         
-        let notificationsSelectedImage = UIImage(named: "notificationsSelectedImage")!.withRenderingMode(.alwaysTemplate)
-       let notificationsImage = UIImage(named: "notificationsSelectedImage")!.withRenderingMode(.alwaysTemplate)
+        
+        let notificationsSelectedImage = handleSetUpTabbarImages(item: "tray").last!//UIImage(named: "notificationsSelectedImage")!.withRenderingMode(.alwaysTemplate)
+       let notificationsImage = handleSetUpTabbarImages(item: "tray").first!//UIImage(named: "notificationsSelectedImage")!.withRenderingMode(.alwaysTemplate)
                      
                
-//        let noAuthNotificationsVC = AuthViewController(imageViewIcon: UIImage(named: "chat (3)")!, signUpLabelText: "Messages and notifications will appear here", navTitle: "All activity")
         let notificationsViewController = handleNavigationControllers(controller: NotificationsVC(), selectedImage: notificationsSelectedImage, image: notificationsImage, title: "Inbox")
         
         
-        let profileSelectedImage = UIImage(named: "profileSelectedImage")!.withRenderingMode(.alwaysTemplate)
-              let profileImage = UIImage(named: "profileSelectedImage")!.withRenderingMode(.alwaysTemplate)
+        let profileSelectedImage = handleSetUpTabbarImages(item: "person").last!//UIImage(named: "profileSelectedImage")!.withRenderingMode(.alwaysTemplate)
+        let profileImage = handleSetUpTabbarImages(item: "person").first!//UIImage(named: "profileSelectedImage")!.withRenderingMode(.alwaysTemplate)
                   
-        let noAuthProfileVC = ProfileViewController(collectionViewLayout: UICollectionViewFlowLayout())//AuthViewController(imageViewIcon: UIImage(named: "user")!, signUpLabelText: "Sign up for an account", navTitle: "Profile")
+        let profileVC = ProfileViewController(collectionViewLayout: UICollectionViewFlowLayout())
 
-        let profileViewController = handleNavigationControllers(controller: noAuthProfileVC, selectedImage: profileSelectedImage, image: profileImage, title: "Me")
+        let profileViewController = handleNavigationControllers(controller: profileVC, selectedImage: profileSelectedImage, image: profileImage, title: "Me")
         
         
         tabBarSeperatorTopLine.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 0.5)
@@ -120,7 +132,6 @@ class MainTabBarController: UITabBarController {
         progressView.bottomAnchor.constraint(equalTo: tabBar.topAnchor, constant: 0).isActive = true
         
         
-        handleFetchCurrentUser()
         viewControllers = [homeViewController, discoverViewController, createPostViewController, notificationsViewController, profileViewController]
         
         guard let items = self.tabBar.items else {return}
@@ -134,7 +145,7 @@ class MainTabBarController: UITabBarController {
     
     
     func handleNavigationControllers(controller: UIViewController, selectedImage: UIImage, image: UIImage, title: String?) -> UINavigationController {
-        let navController = UINavigationController(rootViewController: controller)
+        let navController = MyNavigationController(rootViewController: controller)
         navController.tabBarItem.image = image
         navController.tabBarItem.selectedImage = selectedImage
         navController.tabBarItem.title = title
@@ -144,6 +155,12 @@ class MainTabBarController: UITabBarController {
     
     
   
+    fileprivate func handleSetUpTabbarImages(item: String) -> [UIImage] {
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold, scale: .medium)
+        let normalImage = UIImage(systemName: item, withConfiguration: symbolConfig)!
+        let selectedImage = UIImage(systemName: "\(item).fill", withConfiguration: symbolConfig)!
+        return [normalImage, selectedImage]
+    }
     
     func setTabBarToTransparent() {
         tabBar.tintColor = .white
@@ -203,3 +220,6 @@ extension MainTabBarController : UITabBarControllerDelegate {
         return true
     }
 }
+
+
+

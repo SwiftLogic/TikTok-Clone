@@ -24,12 +24,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDelegate {
        window?.layer.cornerRadius = 6
 //       window?.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] //layerMinXMinYCorner = top left, layerMaxXMinYCorner = top left
         
-        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: defaultFont(size: 18)]
+        let attributes = [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: navBarFont(size: 17)]
         UINavigationBar.appearance().titleTextAttributes = attributes
         
         
-       let rootViewController = MainTabBarController()
-       window?.rootViewController = rootViewController
+        let rootViewController = MainTabBarController()
+        window?.rootViewController = rootViewController
         UINavigationBar.appearance().barTintColor = UIColor.white
         UINavigationBar.appearance().tintColor = UIColor.black
         UITabBar.appearance().tintColor = .black

@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 import SVProgressHUD
-class CreateUsernameVC: UIViewController {
+class CreateUsernameVC: UIViewController, UITextFieldDelegate {
     
     //MARK: Init
     init(birthdate: Date, emailAddress: String, password: String) {
@@ -50,7 +50,7 @@ class CreateUsernameVC: UIViewController {
     
     
     
-    fileprivate let usernameTextField: UITextField = {
+    fileprivate lazy var usernameTextField: UITextField = {
         let tf = UITextField()
         tf.tintColor = tikTokRed
         tf.attributedPlaceholder = NSAttributedString(string: "Username", attributes: [
@@ -58,6 +58,7 @@ class CreateUsernameVC: UIViewController {
             .font: avenirRomanFont(size: 14.5)
         ])
         tf.addTarget(self, action: #selector(handleValidateNextButton), for: .editingChanged)
+        tf.delegate = self
         return tf
     }()
     
@@ -168,4 +169,15 @@ class CreateUsernameVC: UIViewController {
         }
     }
     
+    
+    //Resign First Responders
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    //MARK: - UITextFieldDelegates
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+       textField.resignFirstResponder()
+       return true
+    }
 }
