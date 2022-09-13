@@ -12,10 +12,14 @@
 - [x] **Custom Video Recorder like the actual  tiktok app**
 - [x] **Custom Video Player just like the actual  tiktok app**
 - [x] TikTok-Identical Vertical Swipe up feed.
-- [x] **Overlay Music on Video**
+- [x] **Overlay Music Video processing**
 - [x] Custom UIViewController Transition Animation
 - [x] Custom UIView Transition Animation
 - [x] **Multi video selection**
+- [x] **Text Overlay video processing**
+- [x] Custom Fonts etc.
+
+
 
 **Backend: Firebase**
 - [x] Using Firebase RTDB as data store
@@ -39,12 +43,21 @@
 
 ### Notification Feed:
 
-![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/notificationfeed.gif)
+![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/notificationfeed.gif) 
 
 
-### Select Multiple Videos With Zoom Animations:
+### Video Picker Demo:
+
+Multi Video Selection from Custom Media Picker With Zoom Transition Animations:
 
 ![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/multimediaSelection.gif)
+
+
+### Camera Demo:
+
+Multi-Clip Camera Recording with Custom Camera Recorder, custom font text overlay, voice overlay into recorder clips etc.
+
+![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/camdemo.gif)
 
 
 
