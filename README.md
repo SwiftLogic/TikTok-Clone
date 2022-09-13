@@ -4,8 +4,9 @@
 
 
 ## Some of the Features
-- [x] All UI built with Programmatic UIKit w/o storyboards
-- [x] Auth / Onboarding screens
+- [x] All UI built with Programmatic UIKit w/o storyboards or nibs
+- [x] Auth with Firebase Auth
+- [x] Tiktok Onboarding screens
 - [x] Feed, Profile, Notifications & Discover Tabs
 - [x] Custom Photos & Video Picker like the actual tiktok app
 - [x] Custom Video Recorder like the actual  tiktok app
@@ -14,8 +15,11 @@
 - [x] Overlay Music on Video
 - [x] Custom UIViewController Transition Animation
 
+**Backend: Firebase**
+- [x] Using Firebase RTDB to for data storage
+- [x] Using Firebase Storage to store videos, video thumbnail images & profile images.
 
-**ScreenShots of some of the app screens**
+**ScreenShots**
 
 1. Onboarding
 ![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/tiktokOnboarding1.png)
@@ -26,9 +30,9 @@
 
 ## Video Demos🎥: 
 
-### Home Feed Demo:
+### Home Feed:
 
-![](https://user-images.githubusercontent.com/40702459/189980236-1698fb39-4b26-462b-bfab-364aea008148.mp4)
+![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/homefeed.gif)
 
 More Demos Coming soon...🚧
 
