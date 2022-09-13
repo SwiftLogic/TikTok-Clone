@@ -8,15 +8,17 @@
 - [x] Auth with Firebase Auth
 - [x] Tiktok Onboarding screens
 - [x] Feed, Profile, Notifications & Discover Tabs
-- [x] Custom Photos & Video Picker like the actual tiktok app
-- [x] Custom Video Recorder like the actual  tiktok app
-- [x] Custom Video Player just like the actual  tiktok app
+- [x] **Custom Photos & Video Picker like the actual tiktok app**
+- [x] **Custom Video Recorder like the actual  tiktok app**
+- [x] **Custom Video Player just like the actual  tiktok app**
 - [x] TikTok-Identical Vertical Swipe up feed.
-- [x] Overlay Music on Video
+- [x] **Overlay Music on Video**
 - [x] Custom UIViewController Transition Animation
+- [x] Custom UIView Transition Animation
+- [x] **Multi video selection**
 
 **Backend: Firebase**
-- [x] Using Firebase RTDB to for data storage
+- [x] Using Firebase RTDB as data store
 - [x] Using Firebase Storage to store videos, video thumbnail images & profile images.
 
 **ScreenShots**
@@ -39,6 +41,15 @@
 
 ![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/notificationfeed.gif)
 
+
+### Select Multiple Videos With Zoom Animations:
+
+![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/multimediaSelection.gif)
+
+
+
 More Demos Coming soon...🚧
 
+Major Development Notes Coming soon...🚧
 
+Major Refactor in progress...🚧
