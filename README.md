@@ -24,6 +24,13 @@
 ![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/tiktokMainScreens1.png)
 
 
-## Video Demo: Coming soon...🚧
+## Video Demos🎥: 
+
+### Home Feed Demo:
+
+![](https://user-images.githubusercontent.com/40702459/189980236-1698fb39-4b26-462b-bfab-364aea008148.mp4
+)
+
+More Demos Coming soon...🚧
 
 
