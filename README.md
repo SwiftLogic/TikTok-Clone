@@ -28,8 +28,7 @@
 
 ### Home Feed Demo:
 
-![](https://user-images.githubusercontent.com/40702459/189980236-1698fb39-4b26-462b-bfab-364aea008148.mp4
-)
+![](https://user-images.githubusercontent.com/40702459/189980236-1698fb39-4b26-462b-bfab-364aea008148.mp4)
 
 More Demos Coming soon...🚧
 
