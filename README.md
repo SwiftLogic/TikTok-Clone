@@ -34,6 +34,11 @@
 
 ![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/homefeed.gif)
 
+
+### Notification Feed:
+
+![](https://github.com/samisays11/TikTok-Clone/blob/master/Assets/notificationfeed.gif)
+
 More Demos Coming soon...🚧
 
 
